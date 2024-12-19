@@ -392,9 +392,6 @@ namespace Task_Mangement.Controllers
                     {
                         JArray userListArray = (JArray)jsonResponseObject["getAllUserDetailList"];
                         var userList = userListArray.Select(x => new SelectListItem { Text = x["fullName"].ToString(), Value = x["id"].ToString() }).ToList();
-
-
-
                         ViewBag.UserList = userList;
                     }
                 }
@@ -449,8 +446,8 @@ namespace Task_Mangement.Controllers
                 var requestData = new
                 {
                     Id = request.Id,
-                    ProjectName = request.ProjectName,
-                    UserName = request.UserName
+                    ProjectName = request.ProjectId,
+                    UserName = request.UserId
                 };
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");

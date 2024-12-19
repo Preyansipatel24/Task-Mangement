@@ -3,7 +3,7 @@
     public class ProjectAssignUserViewModel
     {
         public int Id { get; set; }
-        public string ProjectName { get; set; }
-        public string UserName { get; set; }
+        public int ProjectId { get; set; } // As project Id
+        public List<int> UserId { get; set; }
     }
 }
