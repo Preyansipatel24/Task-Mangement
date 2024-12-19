@@ -1,0 +1,87 @@
+﻿@model Task_Mangement.Models.ProjectViewModel
+
+<form method-post asp-action="SaveUpdateProject">
+    <div class="border p-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (@Model.Id > 0)
+        {
+            <div class="form-group row">
+                <h2 class="text-info pl-3">Edit Project</h2>
+            </div>
+        }
+        else
+        {
+            <div class="form-group row">
+                <h2 class="text-info pl-3">Add Project</h2>
+            </div>
+        }
+        <input id="Id" name="Id" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="ProjectName"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="ProjectName" class="form-control" required="requierd" />
+                        <span asp-validation-for="ProjectName" class="text-danger"></span>
+                    </div>
+                </div><br />
+                <div class="form-group row">
+                    <div class="col-4">
+                        @Html.Label("Project Status")
+                    </div>
+                    <div class="col-8">
+                        @Html.DropDownListFor(x => x.ProjectStatus, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
+                    </div>
+                </div>
+                <br />
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="ProjectStartDate"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="ProjectStartDate" class="form-control" type="date" />
+                        @* <span asp-validation-for="ProjectStartDate" class="alert-danger"></span> *@
+                    </div>
+                </div>
+                <br />
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="ProjectEndDate"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="ProjectEndDate" class="form-control" type="date" />
+                        @* <span asp-validation-for="ProjectStartDate" class="alert-danger"></span> *@
+                    </div>
+                </div>
+                <div class="form-group">
+                </div>
+                <br />
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col">
+                            <input type="submit" class="btn btn-info w-40" value="Submit" />
+                            @*  </div>
+
+                            <div class="col">*@
+                            <a asp-action="ProjectIndex" class="btn btn-primary w-40">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i> &nbsp;  Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+@section scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Task_Mangement.Models.ProjectAssignUserViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@* 
+<h1>Index</h1> *@
+
+<p>
+    <a asp-action="AddEditProjectAssignUser">Add Assign User</a>
+</p>
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProjectName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+
+                    <td>
+                        <a asp-action="SaveUpdateProjectAssignUser" asp-route-id="@item.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3 class="alert-warning"> Data not found</h3>
+}

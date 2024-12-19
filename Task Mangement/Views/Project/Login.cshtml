@@ -1,0 +1,59 @@
+﻿@model Task_Mangement.Models.LoginViewModel
+@{
+    Layout = null;
+}
+
+<h1>Login</h1>
+<hr />
+
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="LoginPost" asp-controller="Project" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="CompanyEmail" class="control-label"></label>
+                    <input asp-for="CompanyEmail" class="form-control" placeholder="Email" />
+                    <span asp-validation-for="CompanyEmail" class="text-danger"></span>
+                </div>
+               <br/>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <input asp-for="Password" class="form-control" placeholder="Password" type="password"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <br/>
+                <div class="form-group">
+                    <input type="submit" value="Login" class="btn btn-primary w-34" />
+
+
+                </div>
+                <div>
+                   @*  <a asp-controller="User" asp-action="ForgotPassword">
+                        @* Forgot Password?? 
+                    </a> *@
+                </div>
+            </form>
+        </div>
+        <div style="color:red;">@ViewBag.message</div>
+
+    </div>
+
+</body>
+</html>
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

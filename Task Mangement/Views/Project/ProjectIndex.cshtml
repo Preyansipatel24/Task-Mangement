@@ -1,0 +1,51 @@
+﻿@model List<Task_Mangement.Models.GetProjectIndex>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<p>
+    <a asp-action="AddEditProject">Add Project</a>
+</p>
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ProjectName
+                </th>
+                <th>
+                    ProjectStatus
+                </th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectStatus)
+                    </td>
+
+                    <td>
+                        <a asp-action="AddEditProject" asp-route-id="@item.Id">Edit Project</a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h3 class="alert-warning"> Data not found</h3>
+}
