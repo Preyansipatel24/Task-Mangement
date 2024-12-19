@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Task_Mangement.Models.ProjectAssignUserViewModel>
+﻿@model IEnumerable<Task_Mangement.Models.GetAllProjectAssignDetailList>
 
 @{
     ViewData["Title"] = "Index";
@@ -15,10 +15,10 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.ProjectId)
+                    @Html.DisplayNameFor(model => model.ProjectName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserId)
+                    User
                 </th>
 
                 <th></th>
@@ -29,14 +29,14 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ProjectId)
+                        @Html.DisplayFor(modelItem => item.ProjectName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
+                        <a>View User</a>
                     </td>
 
                     <td>
-                        <a asp-action="SaveUpdateProjectAssignUser" asp-route-id="@item.Id">Edit</a>
+                        <a asp-action="AddEditProjectAssignUser" asp-route-id="@item.Id">Edit</a>
                     </td>
                 </tr>
             }

@@ -3,7 +3,7 @@
 <form method-post asp-action="SaveUpdateDailyTask">
     <div class="border p-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (@Model.Id > 0)
+        @if (@Model != null)
         {
             <div class="form-group row">
                 <h2 class="text-info pl-3">Edit Daily Task</h2>
@@ -15,7 +15,7 @@
                 <h2 class="text-info pl-3">Add Daily Task</h2>
             </div>
         }
-        <input id="ProjectId" name="ProjectId" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
+        <input id="Id" name="Id" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
         <div class="row">
             <div class="col-8">
                 <div class="form-group row">
@@ -80,7 +80,7 @@
                             @*  </div>
 
                             <div class="col">*@
-                            <a asp-action="ProjectIndex" class="btn btn-primary w-40">
+                            <a asp-action="DailyTask" class="btn btn-primary w-40">
                                 <i class="fa-solid fa-arrow-right-to-bracket"></i> &nbsp;  Back
                             </a>
                         </div>

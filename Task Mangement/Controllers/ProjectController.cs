@@ -313,6 +313,39 @@ namespace Task_Mangement.Controllers
 
         public async Task<IActionResult> ProjectAssignUserList()
         {
+            string apiUrl = baseUrl + "/api/Project/GetAllProjectAssignDetailList";
+
+            var requestData = new
+            {
+                pageNumber = 0,
+                pageSize = 0,
+                orderBy = true,
+                searchByString = ""
+            };
+
+            var sessionValue = HttpContext.Session.GetString("SessionKey");
+            string bearerToken = sessionValue;
+            client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseData = await response.Content.ReadAsStringAsync();
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+                if (jsonResponse.status == true)
+                {
+                    var jsonString = jsonResponse.data;
+                    JObject jsonResponseObject = JObject.Parse(Convert.ToString(jsonString));
+                    JArray jsonResponseArray = (JArray)jsonResponseObject["projectAssignDetailList"];
+                    var projectList = jsonResponseArray.ToObject<List<GetAllProjectAssignDetailList>>();
+                    return View(projectList);
+
+                }
+            }
+            return View(new List<GetProjectIndex>());
             return View();
         }
 
@@ -400,36 +433,36 @@ namespace Task_Mangement.Controllers
 
             #region Edit Time
 
-            //if (id > 0)
-            //{
-            //    apiUrl = baseUrl + "/api/Project/GetProjectById";
-            //    var requestData = new
-            //    {
-            //        id = id
-            //    };
+            if (id > 0)
+            {
+                apiUrl = baseUrl + "/api/Project/GetProjectAssignDetailById";
+                var requestData = new
+                {
+                    id = id
+                };
 
-            //    client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
-            //    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
-            //    var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
-            //    var content1 = new StringContent(json, Encoding.UTF8, "application/json");
-            //    HttpResponseMessage response1 = await client.PostAsync(apiUrl, content1);
-            //    if (response1.IsSuccessStatusCode)
-            //    {
-            //        string responseData1 = await response1.Content.ReadAsStringAsync();
-            //        dynamic jsonResponse1 = JsonConvert.DeserializeObject(responseData1);
-            //        if (jsonResponse1.status == true)
-            //        {
-            //            var jsonString1 = jsonResponse1.data;
-            //            JObject jsonResponseObject1 = JObject.Parse(Convert.ToString(jsonString1));
+                client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
+                var content1 = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response1 = await client.PostAsync(apiUrl, content1);
+                if (response1.IsSuccessStatusCode)
+                {
+                    string responseData1 = await response1.Content.ReadAsStringAsync();
+                    dynamic jsonResponse1 = JsonConvert.DeserializeObject(responseData1);
+                    if (jsonResponse1.status == true)
+                    {
+                        var jsonString1 = jsonResponse1.data;
+                        JObject jsonResponseObject1 = JObject.Parse(Convert.ToString(jsonString1));
 
-            //            projectViewModel.Id = (int)jsonResponseObject1["id"];
-            //            projectViewModel.ProjectStatus = (string)jsonResponseObject1["projectStatus"];
-            //            projectViewModel.ProjectName = (string)jsonResponseObject1["projectName"];
-            //            projectViewModel.ProjectStartDate = (DateTime?)jsonResponseObject1["projectStartDate"] != null ? (DateTime?)jsonResponseObject1["projectStartDate"] : null;
-            //            projectViewModel.ProjectEndDate = (DateTime?)jsonResponseObject1["projectEndDate"] != null ? (DateTime?)jsonResponseObject1["projectEndDate"] : null;
-            //        }
-            //    }
-            //}
+                        projectAssignUserViewModel.Id = (int)jsonResponseObject1["id"];
+                        projectAssignUserViewModel.ProjectId = (int)jsonResponseObject1["projectId"];
+                        //projectAssignUserViewModel.ProjectName = (string)jsonResponseObject1["projectName"];
+                        projectAssignUserViewModel.UserId = ((JArray)jsonResponseObject1["userId"]).ToObject<List<int>>();
+
+                    }
+                }
+            }
 
             #endregion
 
@@ -442,20 +475,34 @@ namespace Task_Mangement.Controllers
         {
             if (ModelState.IsValid)
             {
-                string apiUrl = baseUrl + "/api/Auth/Login"; // Replace with the actual API URL
+                string apiUrl = baseUrl + "/api/Project/AddEditProjectAssignDetail"; // Replace with the actual API URL
                 var requestData = new
                 {
-                    Id = request.Id,
-                    ProjectName = request.ProjectId,
-                    UserName = request.UserId
+                    id = request.Id,
+                    projectId = request.ProjectId,
+                    userId = request.UserId
                 };
+                var sessionValue = HttpContext.Session.GetString("SessionKey");
+                string bearerToken = sessionValue;
+                client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(apiUrl, content);
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    return RedirectToAction("ProjectAssignUserList");
+                    dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+                    if (jsonResponse.status == true)
+                    {
+                        return RedirectToAction("ProjectAssignUserList");
+                    }
+                    else
+                    {
+                        ViewBag.message = jsonResponse.message.ToString();
+                        return View();
+                    }
+
                 }
                 else
                 {
@@ -471,20 +518,160 @@ namespace Task_Mangement.Controllers
 
         public async Task<IActionResult> DailyTask()
         {
-            return View();
+            string apiUrl = baseUrl + "/api/TaskManagement/GetAllDailyTaskList";
+
+            var requestData = new
+            {
+                pageNumber = 0,
+                pageSize = 0,
+                orderBy = true,
+                searchByString = "",
+                searchByStatus = "",
+                projectId = 0
+            };
+
+            var sessionValue = HttpContext.Session.GetString("SessionKey");
+            string bearerToken = sessionValue;
+            client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseData = await response.Content.ReadAsStringAsync();
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+                if (jsonResponse.status == true)
+                {
+                    var jsonString = jsonResponse.data;
+                    JObject jsonResponseObject = JObject.Parse(Convert.ToString(jsonString));
+                    JArray jsonResponseArray = (JArray)jsonResponseObject["dailyTaskDetailList"];
+                    var projectList = jsonResponseArray.ToObject<List<GetDailyTaskViewModel>>();
+                    return View(projectList);
+
+                }
+            }
+            return View(new List<GetDailyTaskViewModel>());
         }
 
-        public async Task<IActionResult> AddEditDailyTask()
+        public async Task<IActionResult> AddEditDailyTask(int id)
         {
+            ProjectAssignUserViewModel projectAssignUserViewModel = new ProjectAssignUserViewModel();
 
-            //var context = _uc.Tbl_Roll_Master.Select(x => new SelectListItem { Text = x.RollName, Value = x.RollId.ToString() });
-            //List<SelectList> list = new List<SelectList>().ToList();
-            //ViewBag.RollList = context;
 
-            //var cont = _uc.Tbl_Department_Master.Select(x => new SelectListItem { Text = x.DepartmentName, Value = x.DeptId.ToString() });
-            //List<SelectList> list1 = new List<SelectList>().ToList();
-            //ViewBag.DeptList = cont;
-            return View();
+            var sessionValue = HttpContext.Session.GetString("SessionKey");
+            string bearerToken = sessionValue;
+            client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+
+            #region ProjectDropDown
+            string apiUrl = baseUrl + "/api/Project/GetAllProjectDetailList";
+            var projectrequest = new
+            {
+                pageNumber = 0,
+                pageSize = 0,
+                orderBy = true,
+                searchByString = "",
+                searchByStatus = ""
+            };
+            var projectrequestJson = Newtonsoft.Json.JsonConvert.SerializeObject(projectrequest);
+            var projectContent1 = new StringContent(projectrequestJson, Encoding.UTF8, "application/json");
+            HttpResponseMessage projectResponseDropDown = await client.PostAsync(apiUrl, projectContent1);
+
+
+
+            if (projectResponseDropDown.IsSuccessStatusCode)
+            {
+                string projectDataResponse = await projectResponseDropDown.Content.ReadAsStringAsync();
+                dynamic ProjectListDropDown = JsonConvert.DeserializeObject(projectDataResponse);
+
+                if (ProjectListDropDown.status == true)
+                {
+                    var jsonString = ProjectListDropDown.data;
+                    JObject jsonResponseObject = JObject.Parse(Convert.ToString(jsonString));
+                    if (jsonResponseObject["projectDetailList"] != null)
+                    {
+                        JArray projectListArray = (JArray)jsonResponseObject["projectDetailList"];
+                        var projectList = projectListArray.Select(x => new SelectListItem { Text = x["projectName"].ToString(), Value = x["id"].ToString() }).ToList(); ViewBag.ProjectNameList = projectList;
+                    }
+                }
+
+            }
+            #endregion
+
+            #region UserDropDown
+            apiUrl = baseUrl + "/api/UserV2/GetAllUserList";
+            var userRequest = new
+            {
+                pageNumber = 0,
+                pageSize = 0,
+                orderBy = true,
+                searchByName = "",
+                unitId = 0,
+                areaId = 0,
+                departmentId = 0,
+                designationId = 0,
+                userStatus = "",
+                roleId = 0
+            };
+
+            var userJson = Newtonsoft.Json.JsonConvert.SerializeObject(userRequest);
+            var userContent = new StringContent(userJson, Encoding.UTF8, "application/json");
+            HttpResponseMessage userResponseDropDown = await client.PostAsync(apiUrl, userContent);
+            if (userResponseDropDown.IsSuccessStatusCode)
+            {
+                string userDataResponse = await userResponseDropDown.Content.ReadAsStringAsync();
+                dynamic UserListDropDown = JsonConvert.DeserializeObject(userDataResponse);
+                if (UserListDropDown.status == true)
+                {
+                    var jsonString = UserListDropDown.data;
+                    JObject jsonResponseObject = JObject.Parse(Convert.ToString(jsonString));
+                    if (jsonResponseObject["getAllUserDetailList"] != null)
+                    {
+                        JArray userListArray = (JArray)jsonResponseObject["getAllUserDetailList"];
+                        var userList = userListArray.Select(x => new SelectListItem { Text = x["fullName"].ToString(), Value = x["id"].ToString() }).ToList();
+                        ViewBag.UserList = userList;
+                    }
+                }
+            }
+            #endregion
+
+            #region Edit Time
+
+            if (id > 0)
+            {
+                apiUrl = baseUrl + "/api/Project/GetProjectAssignDetailById";
+                var requestData = new
+                {
+                    id = id
+                };
+
+                client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
+                var content1 = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response1 = await client.PostAsync(apiUrl, content1);
+                if (response1.IsSuccessStatusCode)
+                {
+                    string responseData1 = await response1.Content.ReadAsStringAsync();
+                    dynamic jsonResponse1 = JsonConvert.DeserializeObject(responseData1);
+                    if (jsonResponse1.status == true)
+                    {
+                        var jsonString1 = jsonResponse1.data;
+                        JObject jsonResponseObject1 = JObject.Parse(Convert.ToString(jsonString1));
+
+                        projectAssignUserViewModel.Id = (int)jsonResponseObject1["id"];
+                        projectAssignUserViewModel.ProjectId = (int)jsonResponseObject1["projectId"];
+                        projectAssignUserViewModel.UserId = ((JArray)jsonResponseObject1["userId"]).ToObject<List<int>>();
+
+                    }
+                }
+            }
+
+            #endregion
+
+            return View(projectAssignUserViewModel);
 
         }
 

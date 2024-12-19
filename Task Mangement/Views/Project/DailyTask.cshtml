@@ -1,71 +1,5 @@
-﻿@model IEnumerable<Task_Mangement.Models.DailyTaskViewModel>
-
-@{
-    ViewData["Title"] = "Index";
-}
-@*
-<h1>Index</h1> *@
-
-<p>
-    <a asp-action="AddEditDailyTask">Add Daily Task</a>
-</p>
-@if (Model != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProjectName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TaskDate)
-                </th>
-
-                <th>
-                    @Html.DisplayNameFor(model => model.TaskDescription)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TaskDuration)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TaskStatus)
-                </th>
-
-
-
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProjectName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TaskDate)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TaskDescription)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TaskDuration)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TaskStatus)
-                    </td>
-
-                    <td>
-                        <a asp-action="SaveUpdateDailyTask" asp-route-id="@item.Id">Edit</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+﻿@model IEnumerable<Task_Mangement.Models.GetDailyTaskViewModel>@{    ViewData["Title"] = "Index";}@*<h1>Index</h1> *@<p>    <a asp-action="AddEditDailyTask">Add Daily Task</a></p>@if (Model != null)
+{    <table class="table">        <thead>            <tr>                <th>                    @Html.DisplayNameFor(model => model.ProjectName)                </th>                <th>                    @Html.DisplayNameFor(model => model.TaskDate)                </th>                <th>                    @Html.DisplayNameFor(model => model.TaskDescription)                </th>                <th>                    @Html.DisplayNameFor(model => model.TaskDuration)                </th>                <th>                    @Html.DisplayNameFor(model => model.TaskStatus)                </th>                <th>Action</th>            </tr>        </thead>        <tbody>            @foreach (var item in Model)
+            {                <tr>                    <td>                        @Html.DisplayFor(modelItem => item.ProjectName)                    </td>                    <td>                        @Html.DisplayFor(modelItem => item.TaskDate)                    </td>                    <td>                        @Html.DisplayFor(modelItem => item.TaskDescription)                    </td>                    <td>                        @Html.DisplayFor(modelItem => item.TaskDuration)                    </td>                    <td>                        @Html.DisplayFor(modelItem => item.TaskStatus)                    </td>                    <td>                        <a asp-action="AddEditDailyTask" asp-route-id="@item.Id">Edit</a>                    </td>                </tr>            }        </tbody>    </table>}
 else
-{
-    <h3 class="alert-warning"> Data not found</h3>
-}
+{    <h3 class="alert-warning"> Data not found</h3>}
