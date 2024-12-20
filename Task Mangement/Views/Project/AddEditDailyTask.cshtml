@@ -3,7 +3,7 @@
 <form method-post asp-action="SaveUpdateDailyTask">
     <div class="border p-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (@Model != null)
+        @if (Model != null)
         {
             <div class="form-group row">
                 <h2 class="text-info pl-3">Edit Daily Task</h2>
@@ -20,31 +20,23 @@
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="ProjectName"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="ProjectName" class="form-control" />
-                        <span asp-validation-for="ProjectName" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4">
                         @Html.Label("Project Name")
                     </div>
                     <div class="col-8">
-                        @Html.DropDownListFor(x => x.ProjectName, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
-
+                        @Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
                     </div>
                 </div>
+                <br/>
                 <div class="form-group row">
                     <div class="col-4">
                         <label asp-for="TaskDate"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="TaskDate" class="form-control" />
-                        <span asp-validation-for="TaskDate" class="text-danger"></span>
+                        <input asp-for="TaskDate" class="form-control" type="date" />
+                        <span asp-validation-for="TaskDate" class="alert-danger"></span>
                     </div>
-                </div> 
+                </div>
+                <br />
                 <div class="form-group row">
                     <div class="col-4">
                         <label asp-for="TaskDuration"></label>
@@ -54,6 +46,7 @@
                         <span asp-validation-for="TaskDuration" class="text-danger"></span>
                     </div>
                 </div>
+                <br />
                 <div class="form-group row">
                     <div class="col-4">
                         <label asp-for="TaskDescription"></label>
@@ -63,16 +56,16 @@
                         <span asp-validation-for="TaskDescription" class="text-danger"></span>
                     </div>
                 </div>
+                <br />
                 <div class="form-group row">
                     <div class="col-4">
                         @Html.Label("Task Status")
                     </div>
                     <div class="col-8">
-                        @Html.DropDownListFor(x => x.TaskStatus, new SelectList(ViewBag.TaskStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
-
+                        @Html.DropDownListFor(x => x.TaskStatus, new SelectList(ViewBag.TaskStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
                     </div>
                 </div>
-              
+                <br />
                 <div class="form-group row">
                     <div class="col-8 offset-4 row">
                         <div class="col">
