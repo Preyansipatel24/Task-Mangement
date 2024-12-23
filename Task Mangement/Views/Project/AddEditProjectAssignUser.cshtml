@@ -1,66 +1,66 @@
 ﻿@model Task_Mangement.Models.ProjectAssignUserViewModel
 
 <form method-post asp-action="SaveUpdateProjectAssignUser">
-    <div class="border p-3">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (@Model.Id > 0)
-        {
-            <div class="form-group row">
-                <h2 class="text-info pl-3">Edit Project Assign</h2>
-            </div>
-        }
-        else
-        { 
-            <div class="form-group row">
-                <h2 class="text-info pl-3">Add Project Assign</h2>
-            </div>
-         } 
-        <input id="Id" name="Id" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4">
-                        @Html.Label("Project Name")
-                    </div>
-                    <div class="col-8">
-                        @Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectNameList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
-                    </div>
-                </div>
-                <br/>
-                <div class="form-group row">
-                    <div class="col-4">
-                        @Html.Label("User Name")
-                    </div>
-                    <div class="col-8">
-                        @*  @Html.DropDownListFor(x => x.UserId, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-control", @aria_label = "multiple select example" }) *@
-                        @Html.DropDownListFor(x => x.UserId, new SelectList(ViewBag.UserList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "multiple select example", @multiple = "multiple" })
-                    </div>
-                </div>
-                <br />
-                <div class="form-group row">
-                    <div class="col-8 offset-4 row">
-                        <div class="col">
-                            <input type="submit" class="btn btn-info w-40" value="Submit" />
-                            </div>
+	<div class="border p-3">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		@if (@Model.Id > 0)
+		{
+			<div class="form-group row">
+				<h2 class="text-info pl-3">Edit Project Assign</h2>
+			</div>
+		}
+		else
+		{
+			<div class="form-group row">
+				<h2 class="text-info pl-3">Add Project Assign</h2>
+			</div>
+		}
+		<input id="Id" name="Id" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
+		<div class="row">
+			<div class="col-8">
+				<div class="form-group row">
+					<div class="col-4">
+						@Html.Label("Project Name")
+					</div>
+					<div class="col-8">
+						@Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectNameList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" ,@required = "required" })
+					</div>
+				</div>
+				<br />
+				<div class="form-group row">
+					<div class="col-4">
+						@Html.Label("User Name")
+					</div>
+					<div class="col-8">
+						@Html.ListBoxFor(x => x.UserId, new MultiSelectList(ViewBag.UserList, "Value", "Text", Model.UserId), new { @class = "form-select", @aria_label = "multiple select example" ,@required = "required" })
+					</div>
+				</div>
 
-                            <div class="col">
-                            <a asp-action="ProjectAssignUserList" class="btn btn-primary w-40">
-                                <i class="fa-solid fa-arrow-right-to-bracket"></i> &nbsp;  Back
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-            </div>
+				<br />
+				<div class="form-group row">
+					<div class="col-8 offset-4 row">
+						<div class="col">
+							<input type="submit" class="btn btn-info w-40" value="Submit" />
+							@* </div>
 
-        </div>
-    </div>
+						<div class="col"> *@
+							<a asp-action="ProjectAssignUserList" class="btn btn-primary w-40">
+								<i class="fa-solid fa-arrow-right-to-bracket"></i>  &nbsp;  Back
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-4">
+			</div>
+
+		</div>
+	</div>
 
 </form>
 
 @section scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

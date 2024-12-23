@@ -32,7 +32,7 @@
                         @Html.Label("Project Status")
                     </div>
                     <div class="col-8">
-                        @Html.DropDownListFor(x => x.ProjectStatus, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
+                        @Html.DropDownListFor(x => x.ProjectStatus, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
                     </div>
                 </div>
                 <br />

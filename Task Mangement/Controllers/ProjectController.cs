@@ -51,12 +51,14 @@ namespace Task_Mangement.Controllers
                 else
                 { // Handle the case where status is false
                     ViewBag.message = jsonResponse.message.ToString();
-                    return View();
+                    return View(Login);
                 }
             }
             else
             {
-                return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                //return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                ViewBag.message = response.StatusCode.ToString();
+                return View(Login);
             }
         }
 
@@ -345,8 +347,8 @@ namespace Task_Mangement.Controllers
 
                 }
             }
-            return View(new List<GetProjectIndex>());
-            return View();
+            return View(new List<GetAllProjectAssignDetailList>());
+          
         }
 
         public async Task<IActionResult> AddEditProjectAssignUser(int id)
@@ -500,19 +502,19 @@ namespace Task_Mangement.Controllers
                     else
                     {
                         ViewBag.message = jsonResponse.message.ToString();
-                        return View();
+                        return RedirectToAction("AddEditProjectAssignUser");
                     }
 
                 }
                 else
                 {
-                    return View();
+                    return RedirectToAction("AddEditProjectAssignUser");
                 }
 
             }
             else
             {
-                return View();
+                return RedirectToAction("AddEditProjectAssignUser");
             }
         }
 
@@ -667,7 +669,17 @@ namespace Task_Mangement.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
-                    return RedirectToAction("DailyTask");
+                    dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+                    if (jsonResponse.status == true)
+                    {
+                        return RedirectToAction("DailyTask");
+                    }
+                    else
+                    {
+                        ViewBag.message = jsonResponse.message.ToString();
+                        return RedirectToAction("DailyTask");
+                    }
+                  
                 }
                 else
                 {

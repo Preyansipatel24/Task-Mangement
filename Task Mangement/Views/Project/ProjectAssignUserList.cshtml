@@ -1,49 +1,147 @@
 ﻿@model IEnumerable<Task_Mangement.Models.GetAllProjectAssignDetailList>
+@using Newtonsoft.Json
 
-@{
+@*{
     ViewData["Title"] = "Index";
 }
-@* 
+
 <h1>Index</h1> *@
 
 <p>
-    <a asp-action="AddEditProjectAssignUser">Add Assign User</a>
+	<a asp-action="AddEditProjectAssignUser" class="btn btn-info w-40">Add Assign User</a>
 </p>
-@if (Model != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProjectName)
-                </th>
-                <th>
-                    User
-                </th>
+@* 
+<div id="userPopup" class="modal"> <div class="modal-content"> <span class="close">&times;</span> <div id="userData"></div> </div> </div> *@
+<div id="userPopup" class="modal">
+	<div class="modal-content">
+		<div class="header">
+			<h5 style="margin-top: 9px;margin-bottom: -33px;margin-left: 10px;">User List</h5>
+			<span class="close">&times;</span>
+		</div> <div style="margin-top: 10px;margin-left: 15px;" id="userData"></div>
+	</div>
+</div>
+<style>
+	.modal {
+		display: none;
+		position: fixed;
+		z-index: 1000; /* Ensure the modal is on top */
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.4);
+	}
 
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProjectName)
-                    </td>
-                    <td>
-                        <a>View User</a>
-                    </td>
+	.modal-content {
+		background-color: #fefefe;
+		margin: 10% auto;
+		padding: 20px;
+		border: 1px solid #888;
+		width: 35%; /* Adjusted for better sizing */
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Added shadow for better appearance */
+		animation-name: modalopen;
+		animation-duration: 0.4s;
+	}
 
-                    <td>
-                        <a asp-action="AddEditProjectAssignUser" asp-route-id="@item.Id">Edit</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <h3 class="alert-warning"> Data not found</h3>
+	.close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+		margin-left: 460px;
+	}
+
+		.close:hover, .close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+	.keyframes
+
+	modalopen {
+		from
+
+	{
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+
+	}
+</style>
+<div id="jqxgrid1"></div>
+
+@section Scripts {
+	<script type="text/javascript">
+			$(document).ready(function ()
+			{
+				// Prepare data source
+				   var source = { datatype: "json", localdata: @Html.Raw(JsonConvert.SerializeObject(Model)),
+				   datafields: [
+					   { name: 'ProjectName', type: 'string' },
+					   { name: 'UserDetailList', type: 'array' },
+					   { name: 'Id', type: 'int' },
+				   ]
+				   };
+					   var dataAdapter = new $.jqx.dataAdapter(source); // Initialize jqxGrid
+				   $("#jqxgrid1").jqxGrid({
+					   width: '100%',
+					   source: dataAdapter,
+					   pageable: true,
+					   autoheight: true,
+					   sortable: true,
+					   filterable: true,
+					   columns:
+					   [
+						 { text: 'Project Name', datafield: 'ProjectName', width: '40%' },
+						 { text: 'Users', datafield: 'UserDetailList', width: '40%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties)
+						 {
+						   var id = $('#jqxgrid1').jqxGrid('getcellvalue', row, 'Id');
+						   return `<div style="text-align: left; margin-left: 9px; margin-top: 9px; color: black;"> <a href="javascript:void(0)" onclick="openUserPopup(${id})"> View Users</a> </div>`; }
+						 },
+						 { text: 'Action', datafield: 'Id', width: '20%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties)
+						   { var url = '@Url.Action("AddEditProjectAssignUser", "Project")' + "?id=" + value; return `<div style="text-align: left; margin-left: 9px; margin-top: 9px; color: black;"> <a href="${url}"> <i class="fa-solid fa-pen" style="color: black;"></i> </a> </div>`;}
+						 }
+					   ]
+					});
+			});
+
+		function openUserPopup(id) 
+		{ 
+			var rows = $('#jqxgrid1').jqxGrid('getrows'); 
+			var rowData = rows.find(row => row.Id === id); 
+			console.log(rowData); // Log the data to see what it contains
+			if (rowData && Array.isArray(rowData.UserDetailList))
+			{
+				var users = rowData.UserDetailList;
+				var userHtml = '<ul>';
+				users.forEach(function(user) 
+				{
+					userHtml += `<li>${user.UserName}</li>`; 
+				}); 
+				userHtml += '</ul>'; $('#userData').html(userHtml);
+				$('#userPopup').css('display', 'block'); 
+			} 
+			else
+			{
+				console.error('UserDetailList is undefined or not an array'); 
+			}
+		}
+		document.querySelector('.close').addEventListener('click', function()
+		{ 
+			document.getElementById('userPopup').style.display = 'none';
+		}); 
+		window.addEventListener('click', function(event) 
+		{
+			if (event.target == document.getElementById('userPopup')) 
+			{
+				document.getElementById('userPopup').style.display = 'none'; 
+			}
+		});
+	</script>
+
 }

@@ -1,51 +1,50 @@
 ﻿@model List<Task_Mangement.Models.GetProjectIndex>
+@using Newtonsoft.Json
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
 
 
 <p>
-    <a asp-action="AddEditProject">Add Project</a>
+	<a asp-action="AddEditProject" class="btn btn-info w-40">Add Project</a>
 </p>
-@if (Model != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    ProjectName
-                </th>
-                <th>
-                    ProjectStatus
-                </th>
 
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
 
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProjectName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProjectStatus)
-                    </td>
+<div id="jqxgrid"></div>
+@section Scripts {
+	<script type="text/javascript">
+		$(document).ready(function () {
+			// Prepare data source
+			var source = {
+				datatype: "json",
+				localdata: @Html.Raw(JsonConvert.SerializeObject(Model)),
+				datafields: [
+					{ name: 'ProjectName', type: 'string' },
+					{ name: 'ProjectStatus', type: 'string' },
+					{ name: 'Id', type: 'int' },
+				]
+			};
 
-                    <td>
-                        <a asp-action="AddEditProject" asp-route-id="@item.Id">Edit Project</a>
-                    </td>
-                </tr>
-            }
+			var dataAdapter = new $.jqx.dataAdapter(source);
 
-        </tbody>
-    </table>
-}
-else
-{
-    <h3 class="alert-warning"> Data not found</h3>
+			// Initialize jqxGrid
+			$("#jqxgrid").jqxGrid({
+				width: '100%',
+				source: dataAdapter,
+				pageable: true,
+				autoheight: true,
+				sortable: true,
+				filterable: true,
+				columns: [
+					{ text: 'Project Name', datafield: 'ProjectName', width: '40%' },
+					{ text: 'Project Status', datafield: 'ProjectStatus', width: '40%' },
+					{
+						text: 'Action', datafield: 'Id', width: '20%', cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) { var url = '@Url.Action("AddEditProject")' + "?id=" + value; return `<div style="text-align: left; margin-left: 9px; margin-top: 9px; color: black;"> <a href="${url}"> <i class="fa-solid fa-pen" style="color: black;"></i> </a> </div>`; }
+					}
+				]
+			});
+		});
+	</script>
 }
