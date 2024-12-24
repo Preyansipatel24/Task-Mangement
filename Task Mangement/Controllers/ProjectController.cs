@@ -51,14 +51,14 @@ namespace Task_Mangement.Controllers
                 else
                 { // Handle the case where status is false
                     ViewBag.message = jsonResponse.message.ToString();
-                    return View(Login);
+                    return RedirectToAction("Login");
                 }
             }
             else
             {
                 //return StatusCode((int)response.StatusCode, response.ReasonPhrase);
                 ViewBag.message = response.StatusCode.ToString();
-                return View(Login);
+                return RedirectToAction("Login");
             }
         }
 
@@ -348,7 +348,7 @@ namespace Task_Mangement.Controllers
                 }
             }
             return View(new List<GetAllProjectAssignDetailList>());
-          
+
         }
 
         public async Task<IActionResult> AddEditProjectAssignUser(int id)
@@ -582,70 +582,69 @@ namespace Task_Mangement.Controllers
 
                 }
 
-            }
 
 
-            #region UserDropDown
-            apiUrl = baseUrl + "/api/TaskManagement/GetDailyTaskStatusList";
+                #region UserDropDown
+                apiUrl = baseUrl + "/api/TaskManagement/GetDailyTaskStatusList";
 
-            HttpResponseMessage taskResponseDropDown = await client.PostAsync(apiUrl, null);
-            if (taskResponseDropDown.IsSuccessStatusCode)
-            {
-                string taskDataResponse = await taskResponseDropDown.Content.ReadAsStringAsync();
-                dynamic TaskDailyListDropDown = JsonConvert.DeserializeObject(taskDataResponse);
-                if (TaskDailyListDropDown.status == true)
+                HttpResponseMessage taskResponseDropDown = await client.PostAsync(apiUrl, null);
+                if (taskResponseDropDown.IsSuccessStatusCode)
                 {
-                    var jsonString = TaskDailyListDropDown.data;
-                    JArray jsonResponseArray = JArray.Parse(Convert.ToString(jsonString));
-                    var cont = jsonResponseArray.Select(x => new SelectListItem { Text = x["label"].ToString(), Value = x["value"].ToString() }).ToList();
-                    ViewBag.TaskStatusList = cont;
-                }
-            }
-            #endregion
-
-            #region Edit Time
-
-            if (id > 0)
-            {
-                apiUrl = baseUrl + "/api/TaskManagement/GetDailyTaskById";
-                var requestData = new
-                {
-                    id = id
-                };
-
-                client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
-                var content1 = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response1 = await client.PostAsync(apiUrl, content1);
-                if (response1.IsSuccessStatusCode)
-                {
-                    string responseData1 = await response1.Content.ReadAsStringAsync();
-                    dynamic jsonResponse1 = JsonConvert.DeserializeObject(responseData1);
-                    if (jsonResponse1.status == true)
+                    string taskDataResponse = await taskResponseDropDown.Content.ReadAsStringAsync();
+                    dynamic TaskDailyListDropDown = JsonConvert.DeserializeObject(taskDataResponse);
+                    if (TaskDailyListDropDown.status == true)
                     {
-                        var jsonString1 = jsonResponse1.data;
-                        JObject jsonResponseObject1 = JObject.Parse(Convert.ToString(jsonString1));
-
-                        dailyTaskViewModel.Id = (int)jsonResponseObject1["id"];
-                        dailyTaskViewModel.ProjectId = (int)jsonResponseObject1["projectId"];
-                        dailyTaskViewModel.TaskDate = (DateTime)jsonResponseObject1["taskDate"];
-                        dailyTaskViewModel.TaskDuration = (string)jsonResponseObject1["taskDuration"];
-                        dailyTaskViewModel.TaskDescription = (string)jsonResponseObject1["taskDescription"];
-                        dailyTaskViewModel.TaskStatus = (string)jsonResponseObject1["taskStatus"];
+                        var jsonString = TaskDailyListDropDown.data;
+                        JArray jsonResponseArray = JArray.Parse(Convert.ToString(jsonString));
+                        var cont = jsonResponseArray.Select(x => new SelectListItem { Text = x["label"].ToString(), Value = x["value"].ToString() }).ToList();
+                        ViewBag.TaskStatusList = cont;
                     }
                 }
-            }
-            else
-            {
-                dailyTaskViewModel.TaskDate = DateTime.Now;
-            }
-            #endregion
+                #endregion
 
+                #region Edit Time
+
+                if (id > 0)
+                {
+                    apiUrl = baseUrl + "/api/TaskManagement/GetDailyTaskById";
+                    var requestData = new
+                    {
+                        id = id
+                    };
+
+                    client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+                    var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
+                    var content1 = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response1 = await client.PostAsync(apiUrl, content1);
+                    if (response1.IsSuccessStatusCode)
+                    {
+                        string responseData1 = await response1.Content.ReadAsStringAsync();
+                        dynamic jsonResponse1 = JsonConvert.DeserializeObject(responseData1);
+                        if (jsonResponse1.status == true)
+                        {
+                            var jsonString1 = jsonResponse1.data;
+                            JObject jsonResponseObject1 = JObject.Parse(Convert.ToString(jsonString1));
+
+                            dailyTaskViewModel.Id = (int)jsonResponseObject1["id"];
+                            dailyTaskViewModel.ProjectId = (int)jsonResponseObject1["projectId"];
+                            dailyTaskViewModel.TaskDate = (DateTime)jsonResponseObject1["taskDate"];
+                            dailyTaskViewModel.TaskDuration = (string)jsonResponseObject1["taskDuration"];
+                            dailyTaskViewModel.TaskDescription = (string)jsonResponseObject1["taskDescription"];
+                            dailyTaskViewModel.TaskStatus = (string)jsonResponseObject1["taskStatus"];
+                        }
+                    }
+                }
+                else
+                {
+                    dailyTaskViewModel.TaskDate = DateTime.Now;
+                }
+                #endregion
+            }
             return View(dailyTaskViewModel);
 
-        }
 
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveUpdateDailyTask(DailyTaskViewModel request)
@@ -676,22 +675,24 @@ namespace Task_Mangement.Controllers
                     }
                     else
                     {
+                        return RedirectToAction("AddEditDailyTask");
                         ViewBag.message = jsonResponse.message.ToString();
-                        return RedirectToAction("DailyTask");
                     }
-                  
+
                 }
                 else
                 {
-                    return View();
+                    ViewBag.message = response.ToString();
+                    return RedirectToAction("AddEditDailyTask");
                 }
 
             }
             else
             {
-                return View();
+                return RedirectToAction("AddEditDailyTask");
             }
-        }
 
+        }
     }
+
 }
