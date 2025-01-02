@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "_DefaultBlankLayout";
+    ViewBag.IsLoginPage = "true";
+    string FEBaseURL = ViewBag.FEBaseURL;
+    string ForgetPasswordURL = $"{FEBaseURL}forgot-password";
+    string RSERPLoginURL = $"{FEBaseURL}sign-in";
+}
+
+
+<div class="login-logo">
+    <a href="#"><b>RS</b>ERP</a>
+</div>
+<!-- /.login-logo -->
+<div class="card">
+    <div class="card-body login-card-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        @* <div id="dtxtUserName" class="input-group mb-3">
+            <input id="txtUserName" type="email" class="form-control" placeholder="Email">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-envelope"></span>
+                </div>
+            </div>
+        </div>
+        <div id="dtxtPassword" class="input-group mb-3">
+            <input id="txtPassword" type="password" class="form-control" placeholder="Password">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                </div>
+            </div>
+        </div> *@
+
+        <div id="dtxtUserName" class="input-group mb-3">
+            <input type="email" id="txtUserName" name="txtUserName" class="form-control onlyEmail" isRequired="1" divcontainer="dtxtUserName" errorspan="stxtUserName" defaultvalue="" value="" maxlength="25" placeholder="Email" />
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-envelope"></span>
+                </div>
+            </div>
+            @* <span class="help-block d-none has-error" id="stxtUserName">Please Enter Valid Email</span> *@
+        </div>
+
+        <div id="dtxtPassword" class="input-group mb-3">
+            <input type="password" id="txtPassword" name="txtPassword" class="form-control" isRequired="1" divcontainer="dtxtPassword" errorspan="stxtPassword" defaultvalue="" value="" maxlength="15" placeholder="Password" />
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                </div>
+            </div>
+            @* <span class="help-block d-none has-error" id="stxtPassword">Please Enter Valid Password</span> *@
+        </div>
+
+        <div class="row">
+            @* <div class="col-8">
+            <div class="icheck-primary">
+            <input type="checkbox" id="remember">
+            <label for="remember">
+            Remember Me
+            </label>
+            </div>
+            </div> *@
+            <!-- /.col -->
+            <div class="col-12">
+                <button type="button" id="btnSignIn" class="btn btn-primary btn-block">Sign In</button>
+            </div>
+            <!-- /.col -->
+        </div>
+
+        @*  <div class="social-auth-links text-center mb-3">
+        <p>- OR -</p>
+        <a href="#" class="btn btn-block btn-primary">
+        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+        </a>
+        <a href="#" class="btn btn-block btn-danger">
+        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+        </a>
+        </div> *@
+        <!-- /.social-auth-links -->
+
+        <p class="mb-1" style="text-align:right;">
+            <a href="@ForgetPasswordURL">I forgot my password</a>
+        </p>
+        @* <p class="mb-0">
+        <a href="@RSERPLoginURL" class="text-center">Create new user</a>
+        </p> *@
+    </div>
+    <!-- /.login-card-body -->
+</div>
+
+@section Scripts
+{
+    <script src="~/scripts/auth_index.js?_@DateTime.Now.Ticks"></script>
+}

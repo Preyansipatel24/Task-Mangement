@@ -1,0 +1,109 @@
+﻿@using TaskManagementV1.Models.ResponseModels
+@{
+    ViewBag.dataTable = "true";
+    string Title = "Task";
+    string PageTitle = "Project";
+    string Breadcrumbs = PageTitle;
+    AddEditTaskResModel resModel = Model.Data;
+    Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
+
+}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@Breadcrumbs</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">@Title</li>
+                    <li class="breadcrumb-item"><a href="/Project/Index">@Title List</a></li>
+                    <li class="breadcrumb-item active">@Breadcrumbs</li>
+                </ol>
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title"><b>@Breadcrumbs</b></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <input type="hidden" id="hdnTaskId" name="hdnTaskId" value="@resModel.Id" />
+
+                            <div class="col-md-3">
+                                <div class="form-group" id="dddlProject">
+                                    <label class="form-label"><span class="has-error required">* </span>Project</label>
+                                    <select id="ddlProject" name="ddlProject" class="form-control" isRequired="1" divcontainer="dddlProject" errorspan="sddlProject" defaultvalue="0">
+                                    </select>
+                                    <input type="hidden" id="hdnProjectId" name="hdnProjectId" value="@resModel.ProjectId" />
+                                    <span class="help-block d-none has-error" id="sddlProject">Please Select Project</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dtxtTaskDate">
+                                    <label class="form-label"><span class="has-error required">* </span>Task Date</label>
+                                    @{
+                                        string TaskDateStr = resModel.Id > 0 ? resModel.TaskDate.ToString("yyyy-MM-dd") : "";
+                                    }
+                                    <input type="date" id="txtTaskDate" name="txtTaskDate" class="form-control" isRequired="1" divcontainer="dtxtTaskDate" errorspan="stxtTaskDate" defaultvalue="" value="@TaskDateStr" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                    <span class="help-block d-none has-error" id="stxtTaskDate">Please Select Task Date</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dtxtTaskDuration">
+                                    <label class="form-label"><span class="has-error required">* </span>Task Duration</label>
+                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration" maxlength="25" />
+                                    <span class="help-block d-none has-error" id="stxtTaskDuration">Please Enter Valid Task Duration</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dddlTaskStatus">
+                                    <label class="form-label"><span class="has-error required">* </span>Task Status</label>
+                                    <select id="ddlTaskStatus" name="ddlTaskStatus" class="form-control" isRequired="1" divcontainer="dddlTaskStatus" errorspan="sddlTaskStatus" defaultvalue="">
+                                    </select>
+                                    <input type="hidden" id="hdnStatus" name="hdnStatus" value="@resModel.TaskStatus" />
+                                    <span class="help-block d-none has-error" id="sddlTaskStatus">Please Select Task Status</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" id="dtxtTaskDescription">
+                                    <label class="form-label"><span class="has-error required">* </span>Task Description</label>
+                                    <textarea id="txtTaskDescription" name="txtTaskDescription" class="form-control" isRequired="1" divcontainer="dtxtTaskDescription" errorspan="stxtTaskDescription" defaultvalue="" rows="4" maxlength="300" style="height:124px;">@resModel.TaskDescription</textarea>
+                                    <span class="help-block d-none has-error" id="stxtTaskDescription">Please Enter Task Description</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (resModel.Id == 0)
+                        {
+                            <input type="button" id="btnSaveUpdateTask" name="btnSaveUpdateTask" class="btn btn-success float-right ml-1 btn-save" value="Save" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnSaveUpdateTask" name="btnSaveUpdateTask" class="btn btn-warning float-right ml-1 btn-save" value="Update" />
+                        }
+                        <input type="button" id="btnCancel" name="btnCancel" class="btn btn-danger float-right" value="Cancel" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+@section Scripts
+{
+    <script src="~/scripts/task_addedit.js?_@DateTime.Now.Ticks"></script>
+}

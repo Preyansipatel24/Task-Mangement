@@ -1,0 +1,100 @@
+﻿@using TaskManagementV1.Models.ResponseModels
+@{
+    ViewBag.dataTable = "true";
+    string Title = "Project";
+    string PageTitle = "Project";
+    string Breadcrumbs = PageTitle;
+    ProjectAddEditResModel resModel = Model.Data;
+    Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
+
+}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@Breadcrumbs</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">@Title</li>
+                    <li class="breadcrumb-item"><a href="/Project/Index">@Title List</a></li>
+                    <li class="breadcrumb-item active">@Breadcrumbs</li>
+                </ol>
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title"><b>@Breadcrumbs</b></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <input type="hidden" id="hdnProjectId" name="hdnProjectId" value="@resModel.Id" />
+                            <div class="col-md-3">
+                                <div class="form-group" id="dtxtProjectName">
+                                    <label class="form-label"><span class="has-error required">* </span>Project Name</label>
+                                    <input type="text" id="txtProjectName" name="txtProjectName" class="form-control allowNumericLetters" isRequired="1" divcontainer="dtxtProjectName" errorspan="stxtProjectName" defaultvalue="" value="@resModel.ProjectName" maxlength="25" />
+                                    <span class="help-block d-none has-error" id="stxtProjectName">Please Enter Valid Project Name</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dddlStatus">
+                                    <label class="form-label"><span class="has-error required">* </span>Status</label>
+                                    <select id="ddlStatus" name="ddlStatus" class="form-control" isRequired="1" divcontainer="dddlStatus" errorspan="sddlStatus" defaultvalue="">
+                                    </select>
+                                    <input type="hidden" id="hdnStatus" name="hdnStatus" value="@resModel.ProjectStatus" />
+                                    <span class="help-block d-none has-error" id="sddlStatus">Please Select Status</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dtxtStartDate">
+                                    <label class="form-label"><span class="has-error required"></span>Start Date</label>
+                                    @{
+                                        string ProjectStartDateStr = resModel.ProjectStartDate != null ? resModel.ProjectStartDate.Value.ToString("yyyy-MM-dd") : "";
+                                    }
+                                    <input type="date" id="txtStartDate" name="txtStartDate" class="form-control" isRequired="0" divcontainer="dtxtStartDate" errorspan="stxtStartDate" defaultvalue="" value="@ProjectStartDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.AddMonths(12).ToString("yyyy-MM-dd")' />
+                                    <span class="help-block d-none has-error" id="stxtStartDate">Please Select Start Date</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dtxtEndDate">
+                                    <label class="form-label"><span class="has-error required"></span>End Date</label>
+                                    @{
+                                        string ProjectEndDateStr = resModel.ProjectEndDate != null ? resModel.ProjectEndDate.Value.ToString("yyyy-MM-dd") : "";
+                                    }
+                                    <input type="date" id="txtEndDate" name="txtEndDate" class="form-control" isRequired="0" divcontainer="dtxtEndDate" errorspan="stxtEndDate" defaultvalue="" value="@ProjectEndDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.AddMonths(24).ToString("yyyy-MM-dd")' />
+                                    <span class="help-block d-none has-error" id="stxtEndDate">Please Enter End Date</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (resModel.Id == 0)
+                        {
+                            <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-success float-right ml-1 btn-save" value="Save" />
+                        }
+                        else
+                        {
+                            <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-warning float-right ml-1 btn-save" value="Update" />
+                        }
+                        <input type="button" id="btnCancel" name="btnCancel" class="btn btn-danger float-right" value="Cancel" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+@section Scripts
+{
+    <script src="~/scripts/project_addedit.js?_@DateTime.Now.Ticks"></script>
+}
