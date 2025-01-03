@@ -137,6 +137,8 @@ namespace TaskManagementV1.Controllers
         {
             try
             {
+                client.DefaultRequestHeaders.Authorization = null;
+
                 if (IsTokenRequired == true)
                 {
                     string Token = _httpContextAccessor.HttpContext.Session.GetString("Token");

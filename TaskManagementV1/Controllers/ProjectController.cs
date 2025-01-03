@@ -54,6 +54,11 @@ namespace TaskManagementV1.Controllers
                 {
                     string dataString = JsonConvert.SerializeObject(apiResponse.data.projectDetailList);
                     List<ProjectDetailResModel> responseObject = JsonConvert.DeserializeObject<List<ProjectDetailResModel>>(dataString);
+                    foreach (var item in responseObject)
+                    {
+                        item.ProjectStartDateStr = item.ProjectStartDate!=null ? item.ProjectStartDate.Value.ToString("dd-MM-yyyy"):"NA";
+                        item.ProjectEndDateStr = item.ProjectEndDate!=null ? item.ProjectEndDate.Value.ToString("dd-MM-yyyy"):"NA";
+                    }
                     response.Data = responseObject;
                 }
             }

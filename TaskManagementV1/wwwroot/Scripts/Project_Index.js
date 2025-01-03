@@ -19,6 +19,8 @@ function GetFilteredProductList(searchByString, searchByStatus) {
                 { title: 'Project Id', data: "id", "orderable": true, "searchable": true, class: "noVis" },
                 { title: 'Project Name', data: "projectName", "orderable": true, "searchable": true },
                 { title: 'Project Status', data: "projectStatus", "orderable": true, "searchable": true },
+                { title: 'Start Date', data: "projectStartDateStr", "orderable": true, "searchable": true },
+                { title: 'End Date', data: "projectEndDateStr", "orderable": true, "searchable": true },
                 {
                     title: 'Actions', data: null, class: "text-center clsWrap noExport", "orderable": false, "searchable": false,
                     render: function (data, type, row, meta) {

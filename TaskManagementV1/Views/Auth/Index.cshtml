@@ -1,4 +1,5 @@
 ﻿@{
+    ViewBag.PageTitle = "Sign in";
     Layout = "_DefaultBlankLayout";
     ViewBag.IsLoginPage = "true";
     string FEBaseURL = ViewBag.FEBaseURL;
@@ -8,7 +9,7 @@
 
 
 <div class="login-logo">
-    <a href="#"><b>RS</b>ERP</a>
+    <a href="/Auth/Index"><b>Task</b> Management</a>
 </div>
 <!-- /.login-logo -->
 <div class="card">
@@ -44,7 +45,7 @@
 
         <div id="dtxtPassword" class="input-group mb-3">
             <input type="password" id="txtPassword" name="txtPassword" class="form-control" isRequired="1" divcontainer="dtxtPassword" errorspan="stxtPassword" defaultvalue="" value="" maxlength="15" placeholder="Password" />
-            <div class="input-group-append">
+            <div class="input-group-append" id="togglePassword">
                 <div class="input-group-text">
                     <span class="fas fa-lock"></span>
                 </div>
@@ -80,7 +81,7 @@
         <!-- /.social-auth-links -->
 
         <p class="mb-1" style="text-align:right;">
-            <a href="@ForgetPasswordURL">I forgot my password</a>
+            <a href="@ForgetPasswordURL" target="_blank">I forgot my password</a>
         </p>
         @* <p class="mb-0">
         <a href="@RSERPLoginURL" class="text-center">Create new user</a>

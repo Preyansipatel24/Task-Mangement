@@ -49,6 +49,10 @@ namespace TaskManagementV1.Controllers
                 {
                     string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
                     List<GetTaskListResModel> responseObject = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
+                    foreach (var item in responseObject)
+                    {
+                        item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
+                    }
                     response.Data = responseObject;
                 }
             }

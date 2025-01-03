@@ -6,7 +6,7 @@
     string Breadcrumbs = PageTitle;
     AddEditTaskResModel resModel = Model.Data;
     Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
-
+    ViewBag.PageTitle = Breadcrumbs;
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -60,8 +60,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" id="dtxtTaskDuration">
-                                    <label class="form-label"><span class="has-error required">* </span>Task Duration</label>
-                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration" maxlength="25" />
+                                    <label class="form-label"><span class="has-error required">* </span>Task Duration <i class="fas fa-info-circle danger" data-toggle="tooltip" data-placement="top" title="Task duration allowed in between or equals to : 00:10 and 08:00 hours." style="color:red;"></i></label>
+                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control validate-datetime" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration" max="08:00" min="00:10" />
                                     <span class="help-block d-none has-error" id="stxtTaskDuration">Please Enter Valid Task Duration</span>
                                 </div>
                             </div>

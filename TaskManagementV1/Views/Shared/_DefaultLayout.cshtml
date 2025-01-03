@@ -1,5 +1,6 @@
 ﻿@{
     bool datatable = (!string.IsNullOrWhiteSpace(ViewBag.datatable) && (ViewBag.datatable == "true" || ViewBag.datatable == "True")) ? true : false;
+    string PageTitle = !string.IsNullOrWhiteSpace(ViewBag.PageTitle) ? $"- {ViewBag.PageTitle}" : "";
 }
 <!DOCTYPE html>
 <!--
@@ -10,7 +11,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Top Navigation</title>
+    <title>Task Management @PageTitle</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,6 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="../Theme/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../Theme/dist/css/adminlte.min.css">
+
     @if (datatable)
     {
         <!-- DataTables -->
@@ -35,8 +37,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
             <div class="container">
                 <a href="#" class="navbar-brand">
-                    <img src="../Theme/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-                    <span class="brand-text font-weight-light">RSERP</span>
+                    <img src="../Theme/dist/img/reynalogo.png" alt="Reyna Logo" class="brand-image elevation-3" style="opacity: .8">
+                    <span class="brand-text font-weight-dark">Task Management</span>
                 </a>
 
                 <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +48,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="collapse navbar-collapse order-3" id="navbarCollapse">
                     <!-- Left navbar links -->
                     <ul class="navbar-nav">
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a href="/Home/Dashboard" class="nav-link">Dashboard</a>
                         </li>
                         <li class="nav-item">
@@ -56,7 +58,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <a href="/Task/Index" class="nav-link">Task</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">Report</a>
+                            <a href="/Report/Index" class="nav-link">Report</a>
                         </li>
                         @*  <li class="nav-item dropdown">
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Dropdown</a>
@@ -155,7 +157,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             Anything you want
             </div> *@
             <!-- Default to the left -->
-            <strong>Copyright &copy; 2024-2025 <a href="https://adminlte.io">RSERP</a>.</strong> All rights reserved.
+            <strong>Copyright &copy; 2024-2025 <a href="/Auth/Index">Task Management</a>.</strong> All rights reserved.
         </footer>
     </div>
     <!-- ./wrapper -->
@@ -183,10 +185,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script src="../Theme/plugins/datatables-buttons/js/buttons.print.min.js"></script>
         <script src="../Theme/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
     }
-
     <script src="~/theme/jquery.blockui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/scripts/common.js"></script>
-    @RenderSection("Scripts", required: false);
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

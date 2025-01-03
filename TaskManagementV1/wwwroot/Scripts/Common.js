@@ -790,3 +790,12 @@ function IsEmail(email) {
         return true;
     }
 }
+
+function IsValidDateTime(val, min, max) {
+    if (val < min || val > max) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}

@@ -6,7 +6,7 @@
     string Breadcrumbs = PageTitle;
     ProjectAddEditResModel resModel = Model.Data;
     Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
-
+    ViewBag.PageTitle = Breadcrumbs;
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">

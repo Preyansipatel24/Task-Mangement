@@ -8,6 +8,20 @@ $(document).ready(function () {
     $("#btnSignIn").click(function () {
         LoginV1();
     });
+
+    $('#togglePassword').click(function () {
+        var passwordField = $('#txtPassword');
+        var passwordType = passwordField.attr('type');
+
+        // Toggle the password visibility
+        if (passwordType === 'password') {
+            passwordField.attr('type', 'text');
+            $(this).find('span').removeClass('fas fa-lock').addClass('fas fa-unlock'); // Change icon to eye
+        } else {
+            passwordField.attr('type', 'password');
+            $(this).find('span').removeClass('fas fa-unlock').addClass('fas fa-lock'); // Change icon back to lock
+        }
+    });
 });
 function LoginV1() {
     if (validateRequiredFields()) {

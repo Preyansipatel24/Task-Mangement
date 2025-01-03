@@ -18,7 +18,7 @@ function GetFilteredTaskList(searchByString, searchByStatus, ProjectId) {
             var columns = [
                 //{ title: 'Project Id', data: "id", "orderable": true, "searchable": true, class: "noVis" },
                 { title: 'Project Name', data: "projectName", "orderable": true, "searchable": true },
-                { title: 'Task Date', data: "taskDate", "orderable": true, "searchable": true },
+                { title: 'Task Date', data: "taskDateStr", "orderable": true, "searchable": true },
                 { title: 'Task Duration', data: "taskDuration", "orderable": true, "searchable": true },
                 { title: 'Task Description', data: "taskDescription", "orderable": true, "searchable": true },
                 { title: 'Task Status', data: "taskStatus", "orderable": true, "searchable": true },

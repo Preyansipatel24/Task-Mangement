@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.dataTable = "true";
+    string Title = "Reports";
+    ViewBag.PageTitle = Title;
+}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@Title</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">@Title</li>
+                </ol>
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-12">
+                <div class="card card-primary card-outline card-outline-tabs">
+                    <div class="card-header p-0 pt-1 border-bottom-0">
+                        <ul class="nav nav-tabs" id="custom-report-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" id="Project-Wise-Report-tab" data-toggle="pill" href="#Project-Wise-Report" role="tab" aria-selected="false">Project Wise Report</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="User-Wise-Report-tab" data-toggle="pill" href="#User-Wise-Report" role="tab" aria-selected="false">User Wise Report</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="custom-report-tabContent">
+                            <div class="tab-pane fade" id="Project-Wise-Report" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group" id="dtxtFromDate">
+                                            <label class="form-label"><span class="has-error required"></span>From Date</label>
+                                            <input type="date" id="txtFromDate" name="txtFromDate" class="form-control" isRequired="0" divcontainer="dtxtFromDate" errorspan="stxtFromDate" defaultvalue="" value="" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                            <span class="help-block d-none has-error" id="stxtFromDate">Please Select From Date</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group" id="dtxtToDate">
+                                            <label class="form-label"><span class="has-error required"></span>To Date</label>
+                                            <input type="date" id="txtToDate" name="txtToDate" class="form-control" isRequired="0" divcontainer="dtxtToDate" errorspan="stxtToDate" defaultvalue="" value="" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                            <span class="help-block d-none has-error" id="stxtToDate">Please Select To Date</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                                <hr />
+                                <table id="tblProjectList" class="table table-bordered table-hover" style="width:100%;"></table>
+                            </div>
+                            <div class="tab-pane fade" id="User-Wise-Report" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group" id="dtxtUserFromDate">
+                                            <label class="form-label"><span class="has-error required"></span>From Date</label>
+                                            <input type="date" id="txtUserFromDate" name="txtUserFromDate" class="form-control" isRequired="0" divcontainer="dtxtUserFromDate" errorspan="stxtUserFromDate" defaultvalue="" value="" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                            <span class="help-block d-none has-error" id="stxtUserFromDate">Please Select From Date</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group" id="dtxtUserToDate">
+                                            <label class="form-label"><span class="has-error required"></span>To Date</label>
+                                            <input type="date" id="txtUserToDate" name="txtUserToDate" class="form-control" isRequired="0" divcontainer="dtxtUserToDate" errorspan="stxtUserToDate" defaultvalue="" value="" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                            <span class="help-block d-none has-error" id="stxtUserToDate">Please Select To Date</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                                <hr />
+                                <table id="tblUserList" class="table table-bordered table-hover" style="width:100%;"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content -->
+@section Scripts
+{
+    <script src="~/scripts/report_index.js?_@DateTime.Now.Ticks"></script>
+}
