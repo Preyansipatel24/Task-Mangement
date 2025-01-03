@@ -1,5 +1,14 @@
 ﻿@model Task_Mangement.Models.DownloadReportViewModel
 
+<style>
+	#projectDropdownContainer span.text-danger {
+		display: none;
+	}
+
+	#userDropdownContainer span.text-danger {
+		display: none;
+	}
+</style>
 <form method-post asp-action="DownloadReport">
 	<div class="border p-3">
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -12,13 +21,13 @@
 		<div class="row">
 			<div class="col-8">
 
-				@* <div class="form-group row">
+				<div class="form-group row">
 					<div class="col-4">
 						<label asp-for="IsUserWiseReport">IsUserWiseReport</label>
 					</div>
 					<div class="col-8">
 						<input type="checkbox" asp-for="IsUserWiseReport" class="form-check-input" id="isUserWiseReportCheckbox">
-						@* <span asp-validation-for="IsUserWiseReport" class="text-danger"></span> 
+						<span asp-validation-for="IsUserWiseReport" class="text-danger"></span>
 					</div>
 				</div>
 				<br />
@@ -28,10 +37,9 @@
 					</div>
 					<div class="col-8">
 						@Html.DropDownListFor(x => x.UserId, new SelectList(ViewBag.UserList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
-						<span asp-validation-for="ProjectId" class="text-danger"></span>
+						<span asp-validation-for="UserId" class="text-danger"></span>
 					</div>
 				</div>
-
 				<div class="form-group row" id="projectDropdownContainer" style="display:none;">
 					<div class="col-4">
 						@Html.Label("Project")
@@ -40,9 +48,7 @@
 						@Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" })
 						<span asp-validation-for="ProjectId" class="text-danger"></span>
 					</div>
-				</div> *@
-
-				<div class="form-group row"> <div class="col-4"> <label asp-for="IsUserWiseReport">IsUserWiseReport</label> </div> <div class="col-8"> <input type="checkbox" asp-for="IsUserWiseReport" class="form-check-input" id="isUserWiseReportCheckbox"> <span asp-validation-for="IsUserWiseReport" class="text-danger"></span> </div> </div> <br /> <div class="form-group row" id="userDropdownContainer" style="display:none;"> <div class="col-4"> @Html.Label("User") </div> <div class="col-8"> @Html.DropDownListFor(x => x.UserId, new SelectList(ViewBag.UserList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" }) <span asp-validation-for="UserId" class="text-danger"></span> </div> </div> <div class="form-group row" id="projectDropdownContainer" style="display:none;"> <div class="col-4"> @Html.Label("Project") </div> <div class="col-8"> @Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" }) <span asp-validation-for="ProjectId" class="text-danger"></span> </div> </div>
+				</div>
 				<br />
 				<div class="form-group row">
 					<div class="col-4">
@@ -68,16 +74,9 @@
 				<br />
 
 				<div class="button-container">
-					@* <input type="submit" id="btn" value="Download" /> *@
 
-					@* @if (ViewBag.ReportUrl != null)
-				{
-					<button type="button" id="btn" onclick="openReport()">Download Report</button>
-				}
-				else
-				{ *@
 					<input type="submit" id="btn" value="Download" />
-					@* } *@
+
 				</div>
 			</div>
 			<div class="col-4">
@@ -93,7 +92,7 @@
 	<script>
 		$(document).ready(function () {
 
-					 function toggleDropdowns()
+				 function toggleDropdowns()
 					 {
 						 if($('#isUserWiseReportCheckbox').is(':checked'))
 							 {
@@ -106,32 +105,33 @@
 								 $('#projectDropdownContainer').show();
 							 }
 					 }
-					 function validateUserDropdown() {
+					 function validateUserDropdown()
+					 {
 						 if ($('#userDropdownContainer').is(':visible') && !$('#userDropdownContainer select').val())
 						 {
 							 $('#userDropdownContainer select').addClass('is-invalid');
 							 return false;
-						 } else
+						 }
+						 else
 						 {
 							 $('#userDropdownContainer select').removeClass('is-invalid');
-						 return true;
+							  return true;
 						}
-					 } 
-					 function validateProjectDropdown() 
+					 }
+					 function validateProjectDropdown()
 					 {
-						 if ($('#projectDropdownContainer').is(':visible') && !$('#projectDropdownContainer select').val()) 
+						 if ($('#projectDropdownContainer').is(':visible') && !$('#projectDropdownContainer select').val())
 						 {
 							 $('#projectDropdownContainer select').addClass('is-invalid');
 							 return false;
 						 } else {
-							 $('#projectDropdownContainer select').removeClass('is-invalid'); 
+							 $('#projectDropdownContainer select').removeClass('is-invalid');
 							 return true;
 						 }
-					 } 
-
+					 }
 					 $('#isUserWiseReportCheckbox').change(function ()
-					 { 
-						 toggleDropdowns(); 
+					 {
+						 toggleDropdowns();
 					 });
 
 					 $('select').change(function() {
@@ -140,14 +140,39 @@
 					 });
 
 					 $('#btn').click(function(event) {
-						 var isValid = true;
-						 isValid = validateUserDropdown() && isValid; isValid = validateProjectDropdown() && isValid;
-						 if (!isValid) { event.preventDefault(); }
-					 });
 
+						 var isValid = true;
+						 isValid = validateUserDropdown() && isValid;
+						 isValid = validateProjectDropdown() && isValid;
+						 if (!isValid)
+						 {
+							 event.preventDefault();
+						 }
+					 });
+					 function validateProjectDropdown() {
+						 var projectId = $('#ProjectId').val();
+						 if (!projectId) {
+							 $('#projectDropdownContainer span.text-danger').text('Please select a project').show();
+							 return false;
+						 }
+							 $('#projectDropdownContainer span.text-danger').hide();
+							 return true;
+					 }
+					 function validateUserDropdown() {
+						 var userId = $('#UserId').val();
+						 if (!userId) {
+							 $('#userDropdownContainer span.text-danger').text('Please select a User').show();
+							 return false;
+						 }
+							 $('#userDropdownContainer span.text-danger').hide();
+							 return true;
+					 }
 				 toggleDropdowns();
 
 		});
+		
+	
+
 	</script>
 
 }
