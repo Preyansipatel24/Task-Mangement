@@ -24,6 +24,7 @@
 					</div>
 					<div class="col-8">
 						@Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectNameList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example" ,@required = "required" })
+						<span asp-validation-for="ProjectId" class="text-danger"></span>
 					</div>
 				</div>
 				<br />
@@ -33,27 +34,31 @@
 					</div>
 					<div class="col-8">
 						@Html.ListBoxFor(x => x.UserId, new MultiSelectList(ViewBag.UserList, "Value", "Text", Model.UserId), new { @class = "form-select", @aria_label = "multiple select example" ,@required = "required" })
+						<span asp-validation-for="UserId" class="text-danger"></span>
 					</div>
 				</div>
-
-				<br />
-				<div class="form-group row">
+				<br/>
+				@* <div class="form-group row">
 					<div class="col-8 offset-4 row">
 						<div class="col">
 							<input type="submit" class="btn btn-info w-40" value="Submit" />
 							@* </div>
 
-						<div class="col"> *@
+						<div class="col"> 
 							<a asp-action="ProjectAssignUserList" class="btn btn-primary w-40">
 								<i class="fa-solid fa-arrow-right-to-bracket"></i>  &nbsp;  Back
 							</a>
 						</div>
 					</div>
-				</div>
+				</div> *@
+				<div class="button-container"> <input type="submit" id="btn" value="Submit" /> <a asp-action="ProjectAssignUserList" id="Backbtn"> <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true">&nbsp; Back</i> </a> </div>
 			</div>
 			<div class="col-4">
 			</div>
-
+			<br />
+			<div>
+				<div style="color:red;">@ViewBag.message</div>
+			</div>
 		</div>
 	</div>
 

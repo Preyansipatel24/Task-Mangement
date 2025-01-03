@@ -22,18 +22,12 @@
 					<div class="col-4">
 						@Html.Label("Project Name")
 					</div>
-					@if (ViewBag.ProjectList != null && ViewBag.ProjectList.Count > 0)
-					{
-						<div class="col-8">
-							@Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectList, "Value", "Text", Model.ProjectId), new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
-						</div>
-					}
-					else
-					{
-						<div class="col-8">
-							@Html.DropDownListFor(x => x.ProjectId, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
-						</div>
-					}
+
+					<div class="col-8">
+						@Html.DropDownListFor(x => x.ProjectId, new SelectList(ViewBag.ProjectList, "Value", "Text", Model.ProjectId), new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
+						<span asp-validation-for="ProjectId" class="text-danger"></span>
+					</div>
+
 
 				</div>
 				<br />
@@ -42,7 +36,7 @@
 						<label asp-for="TaskDate"></label>
 					</div>
 					<div class="col-8">
-						<input asp-for="TaskDate" class="form-control" type="date" required/>
+						<input asp-for="TaskDate" class="form-control" type="date" required />
 						<span asp-validation-for="TaskDate" class="alert-danger"></span>
 					</div>
 				</div>
@@ -57,7 +51,7 @@
 					</div>
 				</div>
 				<br />
-				
+
 				<div class="form-group row">
 					<div class="col-4">
 						<label asp-for="TaskDescription"></label>
@@ -69,31 +63,22 @@
 				</div>
 
 				<br />
-				 <div class="form-group row">
-                    <div class="col-4">
-                        @Html.Label("Task Status")
-                    </div>
-                    <div class="col-8">
-						@Html.DropDownListFor(x => x.TaskStatus, new SelectList(ViewBag.TaskStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
-                    </div>
-                </div>
-				<br />
 				<div class="form-group row">
-					<div class="col-8 offset-4 row">
-						<div class="col">
-							<input type="submit" class="btn btn-info w-40" value="submit" />
-							@*  </div>
-
-                            <div class="col">*@
-							<a asp-action="DailyTask" class="btn btn-primary w-40">
-								<i class="fa-solid fa-arrow-right-to-bracket"></i> &nbsp;  Back
-							</a>
-						</div>
+					<div class="col-4">
+						@Html.Label("Task Status")
+					</div>
+					<div class="col-8">
+						@Html.DropDownListFor(x => x.TaskStatus, new SelectList(ViewBag.TaskStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
+						<span asp-validation-for="TaskStatus" class="text-danger"></span>
 					</div>
 				</div>
+				<br />
+
+				<div class="button-container"> <input type="submit" id="btn" value="Submit" /> <a asp-action="DailyTask" id="Backbtn"> <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true">&nbsp; Back</i> </a> </div>
 			</div>
 			<div class="col-4">
 			</div>
+			<br />
 			<div>
 				<div style="color:red;">@ViewBag.message</div>
 			</div>

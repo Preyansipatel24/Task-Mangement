@@ -18,44 +18,45 @@
 		<input id="Id" name="Id" type="hidden" class="form-control col-sm-4" value="@Model.Id" />
 		<div class="row">
 			<div class="col-8">
-				<div class="con">
+				<div class="form-group row">
 					<div class="col-4">
 						<label asp-for="ProjectName"> Project Name</label>
 					</div>
 					<div class="col-8">
-						<input asp-for="ProjectName" class="form-input" required="requierd" />
+						<input asp-for="ProjectName" class="form-control" required="required" />
 						<span asp-validation-for="ProjectName" class="text-danger"></span>
 					</div>
 				</div><br />
-				<div class="con">
+				<div class="form-group row">
 					<div class="col-4">
 						@Html.Label("Project Status")
 					</div>
 					<div class="col-8">
-						@Html.DropDownListFor(x => x.ProjectStatus, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-input1", @aria_label = "Default select example", @required = "required" })
+						@Html.DropDownListFor(x => x.ProjectStatus, new SelectList(ViewBag.ProjectStatusList, "Value", "Text"), htmlAttributes: new { @class = "form-select", @aria_label = "Default select example", @required = "required" })
+						<span asp-validation-for="ProjectStatus" class="text-danger"></span>
 					</div>
 				</div>
 				<br />
-				<div class="con">
+				<div class="form-group row">
 					<div class="col-4">
 						<label asp-for="ProjectStartDate">Project StartDate</label>
 					</div>
 					<div class="col-8">
-						<input asp-for="ProjectStartDate" class="form-input" type="date" />
+						<input asp-for="ProjectStartDate" class="form-control" type="date" />
 						@* <span asp-validation-for="ProjectStartDate" class="alert-danger"></span> *@
 					</div>
 				</div>
 				<br />
-				<div class="con">
+				<div class="form-group row">
 					<div class="col-4">
 						<label asp-for="ProjectEndDate">Project EndDate</label>
 					</div>
 					<div class="col-8">
-						<input asp-for="ProjectEndDate" class="form-input" type="date" />
+						<input asp-for="ProjectEndDate" class="form-control" type="date" />
 						@* <span asp-validation-for="ProjectStartDate" class="alert-danger"></span> *@
 					</div>
 				</div>
-				<div class="con">
+				<div class="form-group row">
 				</div>
 				<br />
 				@* <div class="form-group row">
@@ -76,7 +77,10 @@
 			</div>
 			<div class="col-4">
 			</div>
-
+			<br />
+			<div>
+				<div style="color:red;">@ViewBag.message</div>
+			</div>
 		</div>
 	</div>
 
