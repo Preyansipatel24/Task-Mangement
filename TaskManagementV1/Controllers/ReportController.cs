@@ -66,9 +66,11 @@ namespace TaskManagementV1.Controllers
                 
                 var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, null);
 
-                response.Status = apiResponse.status;
+                //response.Status = apiResponse.status;
+                response.Status = true;
                 response.StatusCode = apiResponse.statusCode;
                 response.Message = apiResponse.message;
+                response.Data = new List<ProjectUserDetail>();
                 if (response.Status == true)
                 {
                     string dataString = JsonConvert.SerializeObject(apiResponse.data);

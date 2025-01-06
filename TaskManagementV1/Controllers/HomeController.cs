@@ -36,8 +36,7 @@ namespace TaskManagementV1.Controllers
                 var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
                 if (apiResponse != null)
                 {
-                    //response.Status = apiResponse.status;
-                    response.Status = true;
+                    response.Status = apiResponse.status;
                     response.StatusCode = apiResponse.statusCode;
                     response.Message = apiResponse.message;
                     if (response.Status == true)
