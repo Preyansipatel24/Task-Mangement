@@ -51,13 +51,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <li class="nav-item active">
                             <a href="/Home/Dashboard" class="nav-link">Dashboard</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-none">
                             <a href="/Project/Index" class="nav-link">Project</a>
                         </li>
                         <li class="nav-item">
                             <a href="/Task/Index" class="nav-link">Task</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-none">
                             <a href="/Report/Index" class="nav-link">Report</a>
                         </li>
                         @*  <li class="nav-item dropdown">
@@ -125,7 +125,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                         <h3 class="dropdown-item-title">
                                             @await Component.InvokeAsync("UserSession")
                                         </h3>
-                                        <p class="text-sm">Role</p>
+                                        <p class="text-sm d-none">Role</p>
                                     </div>
                                 </div>
                                 <!-- Message End -->
