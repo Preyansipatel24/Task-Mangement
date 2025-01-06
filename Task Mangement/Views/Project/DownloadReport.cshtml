@@ -9,7 +9,7 @@
 		display: none;
 	}
 </style>
-<form method-post asp-action="DownloadReport">
+<form method-post asp-action="" id="reportForm">
 	<div class="border p-3">
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -23,7 +23,7 @@
 
 				<div class="form-group row">
 					<div class="col-4">
-						<label asp-for="IsUserWiseReport">IsUserWiseReport</label>
+						<label asp-for="IsUserWiseReport">Is User Wise Report</label>
 					</div>
 					<div class="col-8">
 						<input type="checkbox" asp-for="IsUserWiseReport" class="form-check-input" id="isUserWiseReportCheckbox">
@@ -74,8 +74,7 @@
 				<br />
 
 				<div class="button-container">
-
-					<input type="submit" id="btn" value="Download" />
+					<input type="button" id="btn" value="Download" />
 
 				</div>
 			</div>
@@ -88,91 +87,153 @@
 </form>
 
 @section scripts {
-
-	<script>
+	<script type="text/javascript">
 		$(document).ready(function () {
-
-				 function toggleDropdowns()
-					 {
-						 if($('#isUserWiseReportCheckbox').is(':checked'))
-							 {
-								 $('#userDropdownContainer').show();
-								 $('#projectDropdownContainer').hide();
-							 }
-							 else
-							 {
-								 $('#userDropdownContainer').hide();
-								 $('#projectDropdownContainer').show();
-							 }
-					 }
-					 function validateUserDropdown()
-					 {
-						 if ($('#userDropdownContainer').is(':visible') && !$('#userDropdownContainer select').val())
-						 {
-							 $('#userDropdownContainer select').addClass('is-invalid');
-							 return false;
-						 }
-						 else
-						 {
-							 $('#userDropdownContainer select').removeClass('is-invalid');
-							  return true;
+			toggleDropdowns();
+			$('#isUserWiseReportCheckbox').change(toggleDropdowns);
+			$('select').change(validateDropdowns);
+			$('#btn').click(function (event) {
+				debugger
+				if (!validateDropdowns()) {
+					event.preventDefault();
+				} else {
+					var formData = $('#reportForm').serialize();
+					$.ajax({
+						url: '@Url.Action("GenerateReport", "Project")',
+						type: 'POST',
+						data: formData,
+						success: function (response) {
+							if (response.success) {
+								var fileUrl = response.fileUrl; // Changed 'resFilePath' to 'fileUrl'
+								console.log(fileUrl);
+								var redirectUrl = '@Url.Action("DownloadReport")';
+								window.open(fileUrl, '_blank');
+								window.location.href = redirectUrl;
+							}
 						}
-					 }
-					 function validateProjectDropdown()
-					 {
-						 if ($('#projectDropdownContainer').is(':visible') && !$('#projectDropdownContainer select').val())
-						 {
-							 $('#projectDropdownContainer select').addClass('is-invalid');
-							 return false;
-						 } else {
-							 $('#projectDropdownContainer select').removeClass('is-invalid');
-							 return true;
-						 }
-					 }
-					 $('#isUserWiseReportCheckbox').change(function ()
-					 {
-						 toggleDropdowns();
-					 });
+					});
+				}
+			});
 
-					 $('select').change(function() {
-						 validateUserDropdown();
-						 validateProjectDropdown();
-					 });
+			function toggleDropdowns() {
+				if ($('#isUserWiseReportCheckbox').is(':checked')) {
+					$('#userDropdownContainer').show();
+					$('#projectDropdownContainer').hide();
+				} else {
+					$('#userDropdownContainer').hide();
+					$('#projectDropdownContainer').show();
+				}
+			}
 
-					 $('#btn').click(function(event) {
-
-						 var isValid = true;
-						 isValid = validateUserDropdown() && isValid;
-						 isValid = validateProjectDropdown() && isValid;
-						 if (!isValid)
-						 {
-							 event.preventDefault();
-						 }
-					 });
-					 function validateProjectDropdown() {
-						 var projectId = $('#ProjectId').val();
-						 if (!projectId) {
-							 $('#projectDropdownContainer span.text-danger').text('Please select a project').show();
-							 return false;
-						 }
-							 $('#projectDropdownContainer span.text-danger').hide();
-							 return true;
-					 }
-					 function validateUserDropdown() {
-						 var userId = $('#UserId').val();
-						 if (!userId) {
-							 $('#userDropdownContainer span.text-danger').text('Please select a User').show();
-							 return false;
-						 }
-							 $('#userDropdownContainer span.text-danger').hide();
-							 return true;
-					 }
-				 toggleDropdowns();
-
+			function validateDropdowns() {
+				var isValid = true;
+				if ($('#userDropdownContainer').is(':visible') && !$('#UserId').val()) {
+					$('#userDropdownContainer span.text-danger').text('Please select a User').show();
+					isValid = false;
+				} else {
+					$('#userDropdownContainer span.text-danger').hide();
+				}
+				if ($('#projectDropdownContainer').is(':visible') && !$('#ProjectId').val()) {
+					$('#projectDropdownContainer span.text-danger').text('Please select a project').show();
+					isValid = false;
+				} else {
+					$('#projectDropdownContainer span.text-danger').hide();
+				}
+				return isValid;
+			}
 		});
-		
-	
-
 	</script>
 
+
+	@* <script>
+				$(document).ready(function () {
+					toggleDropdowns();
+
+					$('#isUserWiseReportCheckbox').change(toggleDropdowns);
+					$('select').change(validateDropdowns);
+
+						$('#btn').click(function(event) {
+				if (!validateDropdowns()) {
+					event.preventDefault();
+				} else {
+					var formData = $('#reportForm').serialize();
+					$.ajax({
+						url: '@Url.Action("GenerateReport", "Project")',
+						type: 'POST',
+						data: formData,
+						success: function(response) {
+							if (response.success) {
+								var fileUrl = response.fileUrl;
+								var redirectUrl = '@Url.Action("DownloadReport")';
+
+								var htmlContent = `
+									<html>
+										<head>
+											<script type='text/javascript'>
+												window.onload = function()
+												{
+													var win = window.open('${fileUrl}', '_blank');
+													if (win)
+													{
+														win.focus();
+														window.location.href = '${redirectUrl}';
+													}
+													else
+													{
+														alert('Please enable popups for this site.');
+														window.location.href = '${redirectUrl}';
+													}
+												};
+
+										</head>
+									<body>
+									</body>
+								</html>`;
+
+							var newWindow = window.open();
+							newWindow.document.write(htmlContent);
+							newWindow.document.close();
+		} else {
+							alert(response.message);
+						}
+					},
+					error: function(xhr, status, error) {
+						alert('An error occurred while generating the report');
+					}
+				});
+				event.preventDefault();
+			}
+		});
+
+				});
+
+				function toggleDropdowns() {
+					if ($('#isUserWiseReportCheckbox').is(':checked')) {
+						$('#userDropdownContainer').show();
+						$('#projectDropdownContainer').hide();
+					} else {
+						$('#userDropdownContainer').hide();
+						$('#projectDropdownContainer').show();
+					}
+				}
+
+				function validateDropdowns() {
+					var isValid = true;
+					if ($('#userDropdownContainer').is(':visible') && !$('#UserId').val()) {
+						$('#userDropdownContainer span.text-danger').text('Please select a User').show();
+						isValid = false;
+					} else {
+						$('#userDropdownContainer span.text-danger').hide();
+					}
+
+					if ($('#projectDropdownContainer').is(':visible') && !$('#ProjectId').val()) {
+						$('#projectDropdownContainer span.text-danger').text('Please select a project').show();
+						isValid = false;
+					} else {
+						$('#projectDropdownContainer span.text-danger').hide();
+					}
+
+					return isValid;
+				}
+	</script> *@
 }

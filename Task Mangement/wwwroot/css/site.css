@@ -124,6 +124,28 @@ form .con {
         background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);
         background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
     }
+    .button-container a, .button-container input[type="button"] {
+        display: inline-block;
+        color: #252537;
+        width: 200px;
+        height: 50px;
+        padding: 0 20px;
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        line-height: 50px;
+        transition: all 0.2s linear;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+    }
+
+    .button-container input[type="button"] {
+        /*background: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);*/
+        background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);
+        background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+    }
 
     .button-container a {
         background-image: linear-gradient(-225deg, #E3FDF5 0%, #FFE6FA 100%);

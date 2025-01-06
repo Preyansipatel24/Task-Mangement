@@ -24,8 +24,8 @@ namespace Task_Mangement.Controllers
         }
         private static readonly HttpClient client = new HttpClient();
 
-        //private string baseUrl = "https://localhost:7046";
-        private string  baseUrl = "https://rserp-be-dev.archesoftronix.in";
+       private string baseUrl = "https://localhost:7046";
+       //private string  baseUrl = "https://rserp-be-dev.archesoftronix.in";
         public IActionResult Login()
         {
             return View();
@@ -552,7 +552,7 @@ namespace Task_Mangement.Controllers
                     }
                     else
                     {
-                        
+
                         TempData["FormData"] = JsonConvert.SerializeObject(request); ;
                         TempData["Validation"] = Convert.ToString(jsonResponse.message);
                         return RedirectToAction("AddEditProjectAssignUser");
@@ -727,6 +727,7 @@ namespace Task_Mangement.Controllers
 
 
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveUpdateDailyTask(DailyTaskViewModel request)
@@ -892,12 +893,12 @@ namespace Task_Mangement.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DownloadReport(DownloadReportViewModel request)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateReport(DownloadReportViewModel request)
         {
             if (ModelState.IsValid)
             {
-                string apiUrl = baseUrl + "/api/TaskManagement/GenerateReport"; // Replace with the actual API URL
+                string apiUrl = $"{baseUrl}/api/TaskManagement/GenerateReport"; // Replace with the actual API URL
                 var requestData = new
                 {
                     isUserWiseReport = request.IsUserWiseReport,
@@ -905,70 +906,41 @@ namespace Task_Mangement.Controllers
                     toDate = request.ToDate,
                     userId = request.UserId,
                     projectId = request.ProjectId
-
                 };
-
+                var sessionValue = HttpContext.Session.GetString("SessionKey");
+                string bearerToken = sessionValue;
+                client.DefaultRequestHeaders.Add("Custom-Header", "HeaderValue");
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
                 var json = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
                     dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+
                     if (jsonResponse.status == true)
                     {
-                        // Set the report URL in ViewBag
-                        //TempData["ReportUrl"] = Convert.ToString(jsonResponse.data);
-                        // return RedirectToAction("DownloadReport");
                         string fileUrl = jsonResponse.data;
                         fileUrl = fileUrl.Replace("\\", "/");
-                        //string htmlContent = $@" <html> <head> 
-                        //        <script type='text/javascript'> 
-                        //        window.onload = function() 
-                        //        {{
-                        //        var win = window.open('{fileUrl}', '_blank'); 
-                        //        win.focus(); }}; </script>
-                        //        </head>
-                        //        <body></body> 
-                        //        </html>";
-                        //return Content(htmlContent, "text/html");
-                        string redirectUrl = Url.Action("DownloadReport"); // The action you want to redirect to
-                        string htmlContent = $@" <html> <head> <script type='text/javascript'> window.onload = function()
-{{ var win = window.open('{fileUrl}', '_blank'); win.focus(); window.location.href = '{redirectUrl}'; }};
-</script> </head> <body></body> </html>";
-                        return Content(htmlContent, "text/html");
+                        return Json(new { success = true, fileUrl = fileUrl });
                     }
                     else
                     {
-                        return RedirectToAction("DownloadReport");
+                        return Json(new { success = false, message = "Failed to generate report." });
                     }
-
-
                 }
                 else
                 {
-                    ViewBag.message = response.ToString();
-                    return RedirectToAction("DownloadReport");
+                    return Json(new { success = false, message = "Failed to connect to the API." });
                 }
-
             }
             else
             {
-                return RedirectToAction("DownloadReport");
+                return Json(new { success = false, message = "Invalid request data." });
             }
-            //return RedirectToAction("DownloadReport");
         }
-        [HttpGet("RedirectToFile")]
-        public IActionResult RedirectToFile(string filePath)
-        {
-            string htmlContent = $@"
-                <html>
-                <head>
-                    <meta http-equiv='refresh' content='0;url={filePath}' />
-                </head>
-                <body></body>
-                </html>";
-            return Content(htmlContent, "text/html");
-        }
+
     }
 }
