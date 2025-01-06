@@ -54,14 +54,14 @@
                                     @{
                                         string TaskDateStr = resModel.Id > 0 ? resModel.TaskDate.ToString("yyyy-MM-dd") : "";
                                     }
-                                    <input type="date" id="txtTaskDate" name="txtTaskDate" class="form-control" isRequired="1" divcontainer="dtxtTaskDate" errorspan="stxtTaskDate" defaultvalue="" value="@TaskDateStr" onkeydown="return false;" onclick="this.showPicker()" max='@System.DateTime.Today.ToString("yyyy-MM-dd")' />
+                                    <input type="date" id="txtTaskDate" name="txtTaskDate" class="form-control" isRequired="1" divcontainer="dtxtTaskDate" errorspan="stxtTaskDate" defaultvalue="" value="@TaskDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddDays(-7).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-dd")' />
                                     <span class="help-block d-none has-error" id="stxtTaskDate">Please Select Task Date</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" id="dtxtTaskDuration">
-                                    <label class="form-label"><span class="has-error required">* </span>Task Duration <i class="fas fa-info-circle danger" data-toggle="tooltip" data-placement="top" title="Task duration allowed in between or equals to : 00:10 and 08:00 hours." style="color:red;"></i></label>
-                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control validate-datetime" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration" max="08:00" min="00:10" />
+                                    <label class="form-label"><span class="has-error required">* </span>Task Duration <i class="fas fa-info-circle danger" data-toggle="tooltip" data-placement="top" title="Task duration allowed in between or equals to : 00:10 and 12:00 hours." style="color:red;"></i></label>
+                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control validate-datetime" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration"  min="00:10" max="12:00" />
                                     <span class="help-block d-none has-error" id="stxtTaskDuration">Please Enter Valid Task Duration</span>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                             <div class="col-md-12">
                                 <div class="form-group" id="dtxtTaskDescription">
                                     <label class="form-label"><span class="has-error required">* </span>Task Description</label>
-                                    <textarea id="txtTaskDescription" name="txtTaskDescription" class="form-control" isRequired="1" divcontainer="dtxtTaskDescription" errorspan="stxtTaskDescription" defaultvalue="" rows="4" maxlength="300" style="height:124px;">@resModel.TaskDescription</textarea>
+                                    <textarea id="txtTaskDescription" name="txtTaskDescription" class="form-control" isRequired="1" divcontainer="dtxtTaskDescription" errorspan="stxtTaskDescription" defaultvalue="" rows="4" style="height:124px;">@resModel.TaskDescription</textarea>
                                     <span class="help-block d-none has-error" id="stxtTaskDescription">Please Enter Task Description</span>
                                 </div>
                             </div>

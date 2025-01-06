@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TaskManagementV1.Models.ResponseModels;
 
 namespace TaskManagementV1.Views.Shared.Component
 {
@@ -15,7 +16,7 @@ namespace TaskManagementV1.Views.Shared.Component
         {
             // Retrieve session data (e.g., UserName)
             var token = HttpContext.Session.GetString("Token");
-            var userName = HttpContext.Session.GetString("UserName");
+            var UserDetail = HttpContext.Session.GetObjectFromSession<UserInfoDetail>("UserDetail");
 
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -25,7 +26,7 @@ namespace TaskManagementV1.Views.Shared.Component
             }
 
             // Pass the session value to the view (UserName) to render it
-            return View("Default", userName);
+            return View("Default", UserDetail);
         }
     }
 }

@@ -26,7 +26,8 @@ namespace TaskManagementV1.Controllers
             var token = HttpContext.Session.GetString("Token");
             if (!string.IsNullOrWhiteSpace(token))
             {
-                HttpContext.Session.Remove("UserName");
+                HttpContext.Session.Remove("UserDetail");
+                HttpContext.Session.Remove("PermissionList");
                 HttpContext.Session.Remove("Token");
             }
             ViewBag.FEBaseURL = FEBaseURL;
@@ -49,7 +50,7 @@ namespace TaskManagementV1.Controllers
                 };
 
                 var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body, false);
-                
+
                 response.Status = apiResponse.status;
                 response.StatusCode = apiResponse.statusCode;
                 response.Message = apiResponse.message;
@@ -57,18 +58,26 @@ namespace TaskManagementV1.Controllers
                 {
                     // Parse response into dynamic object
                     string dataString = JsonConvert.SerializeObject(apiResponse.data);
-                    dynamic responseObject = JsonConvert.DeserializeObject(dataString);
+                    LoginResModel responseObject = JsonConvert.DeserializeObject<LoginResModel>(dataString);
 
-                    string FirstName = responseObject.userDetail.firstName;
-                    string LastName = responseObject.userDetail.lastName;
-                    int RoleId = responseObject.userDetail.roleId;
-                    string RoleName = responseObject.userDetail.roleName;
-                    string Token = apiResponse.data.token;
+                    //string FirstName = responseObject.UserDetail.FirstName;
+                    //string LastName = responseObject.UserDetail.LastName;
+                    //int RoleId = responseObject.UserDetail.RoleId;
+                    //string RoleName = responseObject.UserDetail.RoleName;
+                    //string Token = apiResponse.data.token;
 
-                    if (RoleId > 1)
+                    if (responseObject.UserDetail.RoleId > 1)
                     {
-                        HttpContext.Session.SetString("UserName", $"{FirstName} {LastName}");
-                        HttpContext.Session.SetString("Token", Token);
+                        var SubModuleList = responseObject.roleAndPermissionList.FirstOrDefault(x => x.ModuleCode == CommonConstant.Task_Management).SubModuleDetailsLists;
+                        List<ActionDetailsList> actionDetailList = new List<ActionDetailsList>();
+                        foreach (var item in SubModuleList)
+                        {
+                            actionDetailList.AddRange(item.ActionLists.Where(x=>x.IsClick==true).ToList());
+                        }
+
+                        HttpContext.Session.SetObjectInSession("UserDetail", responseObject.UserDetail);
+                        HttpContext.Session.SetObjectInSession("PermissionList", actionDetailList);
+                        HttpContext.Session.SetString("Token", responseObject.Token);
                     }
                     else
                     {
@@ -87,7 +96,8 @@ namespace TaskManagementV1.Controllers
             CommonResponse response = new CommonResponse();
             try
             {
-                HttpContext.Session.Remove("UserName");
+                HttpContext.Session.Remove("UserDetail");
+                HttpContext.Session.Remove("PermissionList");
                 HttpContext.Session.Remove("Token");
             }
             catch (Exception ex)

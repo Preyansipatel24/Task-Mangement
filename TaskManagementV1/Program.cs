@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using TaskManagementV1.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDistributedMemoryCache();  // Use in-memory cache for storing session data
+//builder.Services.AddDistributedMemoryCache();  // Use in-memory cache for storing session data
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);  // Set session timeout (30 minutes)

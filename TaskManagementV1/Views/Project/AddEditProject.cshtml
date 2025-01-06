@@ -7,6 +7,8 @@
     ProjectAddEditResModel resModel = Model.Data;
     Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
     ViewBag.PageTitle = Breadcrumbs;
+    var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -56,11 +58,11 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" id="dtxtStartDate">
-                                    <label class="form-label"><span class="has-error required"></span>Start Date</label>
+                                    <label class="form-label"><span class="has-error required">* </span>Start Date</label>
                                     @{
                                         string ProjectStartDateStr = resModel.ProjectStartDate != null ? resModel.ProjectStartDate.Value.ToString("yyyy-MM-dd") : "";
                                     }
-                                    <input type="date" id="txtStartDate" name="txtStartDate" class="form-control" isRequired="0" divcontainer="dtxtStartDate" errorspan="stxtStartDate" defaultvalue="" value="@ProjectStartDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.AddMonths(12).ToString("yyyy-MM-dd")' />
+                                    <input type="date" id="txtStartDate" name="txtStartDate" class="form-control" isRequired="1" divcontainer="dtxtStartDate" errorspan="stxtStartDate" defaultvalue="" value="@ProjectStartDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.Date.AddMonths(12).ToString("yyyy-MM-dd")' />
                                     <span class="help-block d-none has-error" id="stxtStartDate">Please Select Start Date</span>
                                 </div>
                             </div>
@@ -70,7 +72,7 @@
                                     @{
                                         string ProjectEndDateStr = resModel.ProjectEndDate != null ? resModel.ProjectEndDate.Value.ToString("yyyy-MM-dd") : "";
                                     }
-                                    <input type="date" id="txtEndDate" name="txtEndDate" class="form-control" isRequired="0" divcontainer="dtxtEndDate" errorspan="stxtEndDate" defaultvalue="" value="@ProjectEndDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.AddMonths(24).ToString("yyyy-MM-dd")' />
+                                    <input type="date" id="txtEndDate" name="txtEndDate" class="form-control" isRequired="0" divcontainer="dtxtEndDate" errorspan="stxtEndDate" defaultvalue="" value="@ProjectEndDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddMonths(-6).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.Date.AddMonths(24).ToString("yyyy-MM-dd")' />
                                     <span class="help-block d-none has-error" id="stxtEndDate">Please Enter End Date</span>
                                 </div>
                             </div>
@@ -79,11 +81,17 @@
                     <div class="card-footer">
                         @if (resModel.Id == 0)
                         {
-                            <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-success float-right ml-1 btn-save" value="Save" />
+                            @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_Add))
+                            {
+                                <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-success float-right ml-1 btn-save" value="Save" />
+                            }
                         }
                         else
                         {
-                            <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-warning float-right ml-1 btn-save" value="Update" />
+                            @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_Edit))
+                            {
+                                <input type="button" id="btnSaveUpdateProject" name="btnSaveUpdateProject" class="btn btn-warning float-right ml-1 btn-save" value="Update" />
+                            }
                         }
                         <input type="button" id="btnCancel" name="btnCancel" class="btn btn-danger float-right" value="Cancel" />
                     </div>

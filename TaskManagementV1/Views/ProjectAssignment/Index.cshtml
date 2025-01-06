@@ -1,9 +1,10 @@
-﻿@{
+﻿@using TaskManagementV1.Models.ResponseModels
+@{
     ViewBag.dataTable = "true";
     string Title = "Project";
     string PageTitle = Title + " Assignment User List";
     ViewBag.PageTitle = PageTitle;
-
+    var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -45,7 +46,10 @@
                         </div> *@
                     </div>
                     <div class="card-footer">
-                        <input type="button" id="btnUpdateProjectAssignment" name="btnUpdateProjectAssignment" class="btn btn-success float-right ml-1" value="Update" />
+                        @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_Edit))
+                        {
+                            <input type="button" id="btnUpdateProjectAssignment" name="btnUpdateProjectAssignment" class="btn btn-success float-right ml-1" value="Update" />
+                        }
                         <input type="button" id="btnCancel" name="btnCancel" class="btn btn-danger float-right" value="Cancel" />
                     </div>
                 </div>

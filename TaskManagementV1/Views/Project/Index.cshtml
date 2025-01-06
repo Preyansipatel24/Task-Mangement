@@ -1,8 +1,10 @@
-﻿@{
+﻿@using TaskManagementV1.Models.ResponseModels
+@{
     ViewBag.dataTable = "true";
     string Title = "Project";
     string PageTitle = Title + " List";
     ViewBag.PageTitle = PageTitle;
+    var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -33,15 +35,18 @@
                                 <h2 class="card-title"><b>@PageTitle</b></h2>
                             </div>
                             <div class="col-md-3">
-                               @*  <div class="form-group" id="dddlProjectStatus">
-                                    <label class="form-label"><span class="has-error required"></span>Status</label>
-                                    <select id="ddlProjectStatus" name="ddlProjectStatus" class="form-control" isRequired="1" divcontainer="dddlProjectStatus" errorspan="sddlProjectStatus" defaultvalue="0">
-                                    </select>
-                                    <span class="help-block d-none has-error" id="sddlProjectStatus">Please Select Status</span>
+                                @*  <div class="form-group" id="dddlProjectStatus">
+                                <label class="form-label"><span class="has-error required"></span>Status</label>
+                                <select id="ddlProjectStatus" name="ddlProjectStatus" class="form-control" isRequired="1" divcontainer="dddlProjectStatus" errorspan="sddlProjectStatus" defaultvalue="0">
+                                </select>
+                                <span class="help-block d-none has-error" id="sddlProjectStatus">Please Select Status</span>
                                 </div> *@
                             </div>
                             <div class="col-md-3">
-                                <button type="button" id="btnAddProject" name="btnAddProject" class="btn btn-primary float-right" title="Add @Title"><i class="fas fa-plus"></i> Add @Title</button>
+                                @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_Add))
+                                {
+                                    <button type="button" id="btnAddProject" name="btnAddProject" class="btn btn-primary float-right" title="Add @Title"><i class="fas fa-plus"></i> Add @Title</button>
+                                }
                             </div>
                         </div>
                     </div>

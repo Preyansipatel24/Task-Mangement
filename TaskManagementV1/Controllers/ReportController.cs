@@ -19,7 +19,12 @@ namespace TaskManagementV1.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Report_View))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Auth");
         }
 
         public async Task<IActionResult> GetProjectList(string? searchByString = "", string? searchByStatus = "")

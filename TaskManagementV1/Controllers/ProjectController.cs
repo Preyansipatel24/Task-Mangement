@@ -8,6 +8,7 @@ using System.Dynamic;
 using TaskManagementV1.Models.ResponseModels;
 using System.Net;
 using TaskManagementV1.Models.RequestModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TaskManagementV1.Controllers
 {
@@ -24,7 +25,12 @@ namespace TaskManagementV1.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+            if (PermissionList!=null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Auth");
         }
 
         public async Task<IActionResult> GetProjectList(string? searchByString = "", string? searchByStatus = "")
@@ -56,8 +62,8 @@ namespace TaskManagementV1.Controllers
                     List<ProjectDetailResModel> responseObject = JsonConvert.DeserializeObject<List<ProjectDetailResModel>>(dataString);
                     foreach (var item in responseObject)
                     {
-                        item.ProjectStartDateStr = item.ProjectStartDate!=null ? item.ProjectStartDate.Value.ToString("dd-MM-yyyy"):"NA";
-                        item.ProjectEndDateStr = item.ProjectEndDate!=null ? item.ProjectEndDate.Value.ToString("dd-MM-yyyy"):"NA";
+                        item.ProjectStartDateStr = item.ProjectStartDate != null ? item.ProjectStartDate.Value.ToString("dd-MM-yyyy") : "NA";
+                        item.ProjectEndDateStr = item.ProjectEndDate != null ? item.ProjectEndDate.Value.ToString("dd-MM-yyyy") : "NA";
                     }
                     response.Data = responseObject;
                 }

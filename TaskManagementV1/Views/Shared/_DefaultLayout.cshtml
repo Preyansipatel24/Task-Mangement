@@ -1,6 +1,14 @@
-﻿@{
+﻿@using TaskManagementV1.Models.ResponseModels
+@{
     bool datatable = (!string.IsNullOrWhiteSpace(ViewBag.datatable) && (ViewBag.datatable == "true" || ViewBag.datatable == "True")) ? true : false;
     string PageTitle = !string.IsNullOrWhiteSpace(ViewBag.PageTitle) ? $"- {ViewBag.PageTitle}" : "";
+    var UserDetail = Context.Session.GetObjectFromSession<UserInfoDetail>("UserDetail");
+    var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+    if (UserDetail == null)
+    {
+        Context.Response.Redirect("/Auth/Index");
+    }
+    string FullName = UserDetail != null ? $"{UserDetail.FirstName} {UserDetail.LastName}" : "";
 }
 <!DOCTYPE html>
 <!--
@@ -51,15 +59,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <li class="nav-item active">
                             <a href="/Home/Dashboard" class="nav-link">Dashboard</a>
                         </li>
-                        <li class="nav-item d-none">
-                            <a href="/Project/Index" class="nav-link">Project</a>
-                        </li>
+                        @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+                        {
+                            <li class="nav-item">
+                                <a href="/Project/Index" class="nav-link">Project</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a href="/Task/Index" class="nav-link">Task</a>
                         </li>
-                        <li class="nav-item d-none">
-                            <a href="/Report/Index" class="nav-link">Report</a>
-                        </li>
+                        @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Report_View))
+                        {
+                            <li class="nav-item">
+                                <a href="/Report/Index" class="nav-link">Report</a>
+                            </li>
+                        }
                         @*  <li class="nav-item dropdown">
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Dropdown</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
@@ -113,7 +127,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <!-- Messages Dropdown Menu -->
                     <li class="nav-item dropdown">
                         <a class="nav-link" data-toggle="dropdown" href="#">
-                            <span><b> @await Component.InvokeAsync("UserSession") </b>&nbsp;</span>
+                            <span><b> @FullName</b>&nbsp;</span>
                             <i class="fas fa-user"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-md2 dropdown-menu-right">
@@ -123,9 +137,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <img src="../Theme/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                                     <div class="media-body">
                                         <h3 class="dropdown-item-title">
-                                            @await Component.InvokeAsync("UserSession")
+                                            @FullName
                                         </h3>
-                                        <p class="text-sm d-none">Role</p>
+                                        <p class="text-sm">
+                                            @await Component.InvokeAsync("UserSession")
+                                        </p>
                                     </div>
                                 </div>
                                 <!-- Message End -->
@@ -140,7 +156,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </div>
         </nav>
         <!-- /.navbar -->
-        <!-- Content Wrapper. Contains page content -->
+        <!-- Content Wrapper.Contains page content -->
         <div class="content-wrapper">
             @RenderBody()
         </div>
@@ -168,8 +184,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../Theme/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../Theme/dist/js/adminlte.min.js"></script>
-   
-     @if (datatable)
+
+    @if (datatable)
     {
         <!-- DataTables  & Plugins -->
         <script src="../Theme/plugins/datatables/jquery.dataTables.min.js"></script>
