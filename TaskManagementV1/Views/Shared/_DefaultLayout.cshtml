@@ -1,6 +1,7 @@
 ﻿@using TaskManagementV1.Models.ResponseModels
 @{
     bool datatable = (!string.IsNullOrWhiteSpace(ViewBag.datatable) && (ViewBag.datatable == "true" || ViewBag.datatable == "True")) ? true : false;
+    bool select2 = (!string.IsNullOrWhiteSpace(ViewBag.select2) && (ViewBag.select2 == "true" || ViewBag.select2 == "True")) ? true : false;
     string PageTitle = !string.IsNullOrWhiteSpace(ViewBag.PageTitle) ? $"- {ViewBag.PageTitle}" : "";
     var UserDetail = Context.Session.GetObjectFromSession<UserInfoDetail>("UserDetail");
     var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
@@ -36,6 +37,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <link rel="stylesheet" href="../Theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
         @*<link rel="stylesheet" href="../Theme/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">*@
     }
+    @if (select2)
+    {
+        <!-- Select2 -->
+        <link rel="stylesheet" href="../Theme/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="../Theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    }
     <link href="~/scripts/common.css" rel="stylesheet" />
 </head>
 <body class="hold-transition layout-top-nav fade-in">
@@ -56,7 +63,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="collapse navbar-collapse order-3" id="navbarCollapse">
                     <!-- Left navbar links -->
                     <ul class="navbar-nav">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a href="/Home/Dashboard" class="nav-link">Dashboard</a>
                         </li>
                         @if (PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
@@ -74,39 +81,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 <a href="/Report/Index" class="nav-link">Report</a>
                             </li>
                         }
-                        @*  <li class="nav-item dropdown">
-                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Dropdown</a>
-                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
-                        <li><a href="#" class="dropdown-item">Some action </a></li>
-                        <li><a href="#" class="dropdown-item">Some other action</a></li>
-
-                        <li class="dropdown-divider"></li>
-
-                        <!-- Level two dropdown-->
-                        <li class="dropdown-submenu dropdown-hover">
-                        <a id="dropdownSubMenu2" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-item dropdown-toggle">Hover for action</a>
-                        <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
-                        <li>
-                        <a tabindex="-1" href="#" class="dropdown-item">level 2</a>
-                        </li>
-
-                        <!-- Level three dropdown-->
-                        <li class="dropdown-submenu">
-                        <a id="dropdownSubMenu3" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-item dropdown-toggle">level 2</a>
-                        <ul aria-labelledby="dropdownSubMenu3" class="dropdown-menu border-0 shadow">
-                        <li><a href="#" class="dropdown-item">3rd level</a></li>
-                        <li><a href="#" class="dropdown-item">3rd level</a></li>
-                        </ul>
-                        </li>
-                        <!-- End Level three -->
-
-                        <li><a href="#" class="dropdown-item">level 2</a></li>
-                        <li><a href="#" class="dropdown-item">level 2</a></li>
-                        </ul>
-                        </li>
-                        <!-- End Level two -->
-                        </ul>
-                        </li> *@
                     </ul>
 
                     <!-- SEARCH FORM -->
@@ -184,6 +158,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="../Theme/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../Theme/dist/js/adminlte.min.js"></script>
+    @if (select2)
+    {
+        <!-- Select2 -->
+        <script src="../Theme/plugins/select2/js/select2.full.min.js"></script>
+    }
 
     @if (datatable)
     {
@@ -204,6 +183,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="~/theme/jquery.blockui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/scripts/common.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Get the current page's pathname
+            var currentPath = window.location.pathname;
+
+            // Loop through all the navbar links
+            $('.navbar-nav .nav-item a').each(function () {
+                debugger
+                // Check if the href attribute of the link matches the current page URL
+                if (this.href.includes(currentPath) && ! this.href.includes('#')) {
+                    // Remove 'active' class from all links
+                    $('.navbar-nav .nav-item').removeClass('active');
+                    // Add the 'active' class to the clicked link
+                    $(this).parent().addClass('active');
+                }
+            });
+        });
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

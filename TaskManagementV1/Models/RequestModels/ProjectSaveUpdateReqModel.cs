@@ -7,5 +7,6 @@
         public string ProjectStatus { get; set; }
         public DateTime? ProjectStartDate { get; set; }
         public DateTime? ProjectEndDate { get; set; }
+        public int ReportingPersonUserId { get; set; }
     }
 }

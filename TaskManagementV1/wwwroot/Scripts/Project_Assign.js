@@ -1,21 +1,24 @@
 ﻿
 $(document).ready(function () {
-    GetProjectUserList(parseInt($("#hdnProjectId").val()));
+
+    LoadDepartmentList();
+    LoadDesignationList();
+    GetProjectUserList();
 
     $("#btnCancel").click(function () {
         $.blockUI();
         RedirectToPage('/Project/Index');
     });
-
-
+    $('.select2').select2();
 });
 
-function GetProjectUserList(ProjectId) {
+function GetProjectUserList() {
     $.blockUI();
-    ajaxCall("Get", false, '/ProjectAssignment/ProjectUserList?ProjectId=' + ProjectId, null, function (result) {
+    ajaxCall("Get", false, '/ProjectAssignment/ProjectUserList?ProjectId=' + parseInt($("#hdnProjectId").val()) + '&DepartmentId=' + parseInt($("#ddlDepartment").val()) + '&DesignationId=' + parseInt($("#ddlDesignation").val()), null, function (result) {
         $("#divProjectAssignmentList").html(result.responseText);
         ApplyDatatable('tblProjectAssignmentList');
         $.unblockUI();
+
         $("#btnUpdateProjectAssignment").click(function () {
             Swal.fire({
                 title: 'Are you sure?',
@@ -55,5 +58,40 @@ function GetProjectUserList(ProjectId) {
                 }
             });
         });
+        $("#ddlDepartment").change(function () {
+            GetProjectUserList();
+        });
+        $("#ddlDesignation").change(function () {
+            GetProjectUserList();
+        });
+        
+    });
+}
+
+function LoadDepartmentList() {
+    $.blockUI();
+    ajaxCall("Get", false, '/ProjectAssignment/GetDepartmentList?ProjectId=' + parseInt($("#hdnProjectId").val()), null, function (result) {
+        $("#ddlDepartment").html('');
+        $("#ddlDepartment").append('<option value="0"> All </option>');
+        if (result.status == true) {
+            $.each(result.data, function (index, value) {
+                $("#ddlDepartment").append('<option  value="' + value.value + '">' + value.key + '</option>');
+            });
+        }
+        $.unblockUI();
+    });
+}
+
+function LoadDesignationList() {
+    $.blockUI();
+    ajaxCall("Get", false, '/ProjectAssignment/GetDesignationList?ProjectId=' + parseInt($("#hdnProjectId").val()), null, function (result) {
+        $("#ddlDesignation").html('');
+        $("#ddlDesignation").append('<option value="0"> All </option>');
+        if (result.status == true) {
+            $.each(result.data, function (index, value) {
+                $("#ddlDesignation").append('<option  value="' + value.value + '">' + value.key + '</option>');
+            });
+        }
+        $.unblockUI();
     });
 }

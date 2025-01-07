@@ -93,42 +93,70 @@ namespace TaskManagementV1.Controllers
             catch (Exception ex) { response.Message = ex.Message; }
             return Json(response);
         }
-        public async Task<IActionResult> AddEditProject(int ProjectId)
+        public async Task<IActionResult> GetReportingPersonList()
         {
             CommonResponse response = new CommonResponse();
             try
             {
-                if (ProjectId > 0)
-                {
-                    var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
-                    string apiUrl = BEBaseURL + "api/Project/GetProjectById";
-                    var body = new
-                    {
-                        id = ProjectId
-                    };
+                var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
+                string apiUrl = BEBaseURL + "api/Project/GetReportingPersonUserList";
 
-                    var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+                var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, null);
 
-                    response.Status = apiResponse.status;
-                    response.StatusCode = apiResponse.statusCode;
-                    response.Message = apiResponse.message;
-                    if (response.Status == true)
-                    {
-                        string dataString = JsonConvert.SerializeObject(apiResponse.data);
-                        ProjectAddEditResModel responseObject = JsonConvert.DeserializeObject<ProjectAddEditResModel>(dataString);
-                        response.Data = responseObject;
-                    }
-                }
-                else
+                response.Status = apiResponse.status;
+                response.StatusCode = apiResponse.statusCode;
+                response.Message = apiResponse.message;
+                if (response.Status == true)
                 {
-                    response.Status = true;
-                    response.StatusCode = HttpStatusCode.OK;
-                    response.Message = "Add Mode";
-                    response.Data = new ProjectAddEditResModel();
+                    string dataString = JsonConvert.SerializeObject(apiResponse.data);
+                    List<GetReportingPersonUserListResModel> responseObject = JsonConvert.DeserializeObject<List<GetReportingPersonUserListResModel>>(dataString);
+                    response.Data = responseObject;
                 }
             }
             catch (Exception ex) { response.Message = ex.Message; }
-            return View(response);
+            return Json(response);
+        }
+        public async Task<IActionResult> AddEditProject(int ProjectId)
+        {
+            var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+            {
+                CommonResponse response = new CommonResponse();
+                try
+                {
+                    if (ProjectId > 0)
+                    {
+                        var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
+                        string apiUrl = BEBaseURL + "api/Project/GetProjectById";
+                        var body = new
+                        {
+                            id = ProjectId
+                        };
+
+                        var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+
+                        response.Status = apiResponse.status;
+                        response.StatusCode = apiResponse.statusCode;
+                        response.Message = apiResponse.message;
+                        if (response.Status == true)
+                        {
+                            string dataString = JsonConvert.SerializeObject(apiResponse.data);
+                            ProjectAddEditResModel responseObject = JsonConvert.DeserializeObject<ProjectAddEditResModel>(dataString);
+                            response.Data = responseObject;
+                        }
+                    }
+                    else
+                    {
+                        response.Status = true;
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Message = "Add Mode";
+                        response.Data = new ProjectAddEditResModel();
+                    }
+                }
+                catch (Exception ex) { response.Message = ex.Message; }
+                return View(response);
+            }
+            return RedirectToAction("Index", "Auth");
         }
 
         [HttpPost]
@@ -146,6 +174,7 @@ namespace TaskManagementV1.Controllers
                     projectStatus = request.ProjectStatus,
                     projectStartDate = request.ProjectStartDate,
                     projectEndDate = request.ProjectEndDate,
+                    reportingPersonUserId = request.ReportingPersonUserId,
                 };
 
                 var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);

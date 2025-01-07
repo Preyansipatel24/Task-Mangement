@@ -1,6 +1,7 @@
 ﻿@using TaskManagementV1.Models.ResponseModels
 @{
     ViewBag.dataTable = "true";
+    ViewBag.select2 = "true";
     string Title = "Task";
     string PageTitle = "Project";
     string Breadcrumbs = PageTitle;
@@ -42,7 +43,7 @@
                             <div class="col-md-3">
                                 <div class="form-group" id="dddlProject">
                                     <label class="form-label"><span class="has-error required">* </span>Project</label>
-                                    <select id="ddlProject" name="ddlProject" class="form-control" isRequired="1" divcontainer="dddlProject" errorspan="sddlProject" defaultvalue="0">
+                                    <select id="ddlProject" name="ddlProject" class="form-control select2" isRequired="1" divcontainer="dddlProject" errorspan="sddlProject" defaultvalue="0">
                                     </select>
                                     <input type="hidden" id="hdnProjectId" name="hdnProjectId" value="@resModel.ProjectId" />
                                     <span class="help-block d-none has-error" id="sddlProject">Please Select Project</span>
@@ -68,7 +69,7 @@
                             <div class="col-md-3">
                                 <div class="form-group" id="dddlTaskStatus">
                                     <label class="form-label"><span class="has-error required">* </span>Task Status</label>
-                                    <select id="ddlTaskStatus" name="ddlTaskStatus" class="form-control" isRequired="1" divcontainer="dddlTaskStatus" errorspan="sddlTaskStatus" defaultvalue="">
+                                    <select id="ddlTaskStatus" name="ddlTaskStatus" class="form-control select2" isRequired="1" divcontainer="dddlTaskStatus" errorspan="sddlTaskStatus" defaultvalue="">
                                     </select>
                                     <input type="hidden" id="hdnStatus" name="hdnStatus" value="@resModel.TaskStatus" />
                                     <span class="help-block d-none has-error" id="sddlTaskStatus">Please Select Task Status</span>

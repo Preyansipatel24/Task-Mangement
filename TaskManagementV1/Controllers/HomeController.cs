@@ -18,41 +18,46 @@ namespace TaskManagementV1.Controllers
         }
         public async Task<IActionResult> Dashboard()
         {
-            CommonResponse response = new CommonResponse();
-            try
+            var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
             {
-                var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
-                string apiUrl = BEBaseURL + "api/TaskManagement/GetAllDailyTaskList";
-                var body = new
+                CommonResponse response = new CommonResponse();
+                try
                 {
-                    pageNumber = 0,
-                    pageSize = 0,
-                    orderBy = true,
-                    searchByString = "",
-                    searchByStatus = "",
-                    ProjectId = 0
-                };
-
-                var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
-                if (apiResponse != null)
-                {
-                    response.Status = apiResponse.status;
-                    response.StatusCode = apiResponse.statusCode;
-                    response.Message = apiResponse.message;
-                    if (response.Status == true)
+                    var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
+                    string apiUrl = BEBaseURL + "api/TaskManagement/GetAllDailyTaskList";
+                    var body = new
                     {
-                        string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
-                        List<GetTaskListResModel> responseObject = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
-                        foreach (var item in responseObject)
+                        pageNumber = 0,
+                        pageSize = 0,
+                        orderBy = true,
+                        searchByString = "",
+                        searchByStatus = "",
+                        ProjectId = 0
+                    };
+
+                    var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+                    if (apiResponse != null)
+                    {
+                        response.Status = apiResponse.status;
+                        response.StatusCode = apiResponse.statusCode;
+                        response.Message = apiResponse.message;
+                        if (response.Status == true)
                         {
-                            item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
+                            string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
+                            List<GetTaskListResModel> responseObject = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
+                            foreach (var item in responseObject)
+                            {
+                                item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
+                            }
+                            response.Data = responseObject;
                         }
-                        response.Data = responseObject;
                     }
                 }
+                catch (Exception ex) { response.Message = ex.Message; }
+                return View(response);
             }
-            catch (Exception ex) { response.Message = ex.Message; }
-            return View(response);
+            return RedirectToAction("Index", "Auth");
         }
 
     }

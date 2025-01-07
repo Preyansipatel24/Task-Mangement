@@ -30,7 +30,7 @@
             });
         }
     });
-
+    $('.select2').select2();
 });
 
 function LoadProjectList() {

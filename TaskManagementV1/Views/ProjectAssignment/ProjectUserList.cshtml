@@ -7,32 +7,11 @@
 
 @if (Model.Status)
 {
-    <div class="card-header">
-
+    <div class="card-body">
         @{
             ProjectUserListResModel resModel = Model.Data;
             List<ProjectUserDetail> list = Model.Data.ProjectUserDetailList;
-            string StartDateStr = resModel.ProjectStartDate != null ? resModel.ProjectStartDate.Value.ToString("dd-MM-yyyy") : "NA";
-            string EndDateStr = resModel.ProjectEndDate != null ? resModel.ProjectEndDate.Value.ToString("dd-MM-yyyy") : "NA";
         }
-        <div class="row">
-            <div class="col-md-3">
-                <h2 class="card-title"><b>Project Name : </b>@resModel.ProjectName</h2>
-            </div>
-            <div class="col-md-3">
-                <h2 class="card-title">
-                    <b>Project Status : </b>@resModel.ProjectStatus
-                </h2>
-            </div>
-            <div class="col-md-3">
-                <h2 class="card-title"><b>Project StartDate : </b>@StartDateStr</h2>
-            </div>
-            <div class="col-md-3">
-                <h2 class="card-title"><b>Project EndDate : </b>@EndDateStr</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-body">
         <div class="row form-group">
             <div class="col-md-12">
                 <table id="tblProjectAssignmentList" class="table table-bordered table-hover" style="width:100%;">
@@ -56,10 +35,12 @@
                                 <td class=" text-center">
                                     @if (item.IsAssigned)
                                     {
+                                        <span class="d-none">true</span>
                                         <input type="checkbox" class="chk-user-assignment" UserId="@item.UserId" checked />
                                     }
                                     else
                                     {
+                                        <span class="d-none">false</span>
                                         <input type="checkbox" class="chk-user-assignment" UserId="@item.UserId" />
                                     }
                                 </td>

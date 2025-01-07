@@ -16,11 +16,18 @@ function GetFilteredProductList(searchByString, searchByStatus) {
         if (result.status == true) {
             console.log(result);
             var columns = [
-                { title: 'Project Id', data: "id", "orderable": true, "searchable": true, class: "noVis" },
+                //{ title: 'Project Id', data: "id", "orderable": true, "searchable": true, class: "noVis" },
                 { title: 'Project Name', data: "projectName", "orderable": true, "searchable": true },
                 { title: 'Project Status', data: "projectStatus", "orderable": true, "searchable": true },
                 { title: 'Start Date', data: "projectStartDateStr", "orderable": true, "searchable": true },
                 { title: 'End Date', data: "projectEndDateStr", "orderable": true, "searchable": true },
+                //{ title: 'Reporting Person', data: "reportingPersonFullName", "orderable": true, "searchable": true },
+                {
+                    title: 'Reporting Person', data: null, class: "clsWrap noExport", "orderable": true, "searchable": true,
+                    render: function (data, type, row, meta) {
+                        return data.reportingPersonFullName + ' - ( ' + data.reportingPersonDesignationName +' )';
+                    }
+                },
                 {
                     title: 'Actions', data: null, class: "text-center clsWrap noExport", "orderable": false, "searchable": false,
                     render: function (data, type, row, meta) {

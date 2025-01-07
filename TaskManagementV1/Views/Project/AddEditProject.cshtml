@@ -1,6 +1,7 @@
 ﻿@using TaskManagementV1.Models.ResponseModels
 @{
     ViewBag.dataTable = "true";
+    ViewBag.select2 = "true";
     string Title = "Project";
     string PageTitle = "Project";
     string Breadcrumbs = PageTitle;
@@ -40,20 +41,11 @@
                     <div class="card-body">
                         <div class="row">
                             <input type="hidden" id="hdnProjectId" name="hdnProjectId" value="@resModel.Id" />
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <div class="form-group" id="dtxtProjectName">
                                     <label class="form-label"><span class="has-error required">* </span>Project Name</label>
                                     <input type="text" id="txtProjectName" name="txtProjectName" class="form-control allowNumericLetters" isRequired="1" divcontainer="dtxtProjectName" errorspan="stxtProjectName" defaultvalue="" value="@resModel.ProjectName" maxlength="25" />
                                     <span class="help-block d-none has-error" id="stxtProjectName">Please Enter Valid Project Name</span>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group" id="dddlStatus">
-                                    <label class="form-label"><span class="has-error required">* </span>Status</label>
-                                    <select id="ddlStatus" name="ddlStatus" class="form-control" isRequired="1" divcontainer="dddlStatus" errorspan="sddlStatus" defaultvalue="">
-                                    </select>
-                                    <input type="hidden" id="hdnStatus" name="hdnStatus" value="@resModel.ProjectStatus" />
-                                    <span class="help-block d-none has-error" id="sddlStatus">Please Select Status</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -76,6 +68,28 @@
                                     <span class="help-block d-none has-error" id="stxtEndDate">Please Enter End Date</span>
                                 </div>
                             </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group" id="dddlReportingPerson">
+                                    <label class="form-label"><span class="has-error required">* </span>Reporting Person</label>
+                                    <select id="ddlReportingPerson" name="ddlReportingPerson" class="form-control select2" isRequired="1" divcontainer="dddlReportingPerson" errorspan="sddlReportingPerson" defaultvalue="0">
+                                    </select>
+                                    <input type="hidden" id="hdnddlReportingPerson" name="hdnddlReportingPerson" value="@resModel.ReportingPersonUserId" />
+                                    <span class="help-block d-none has-error" id="sddlReportingPerson">Please Select Reporting Person</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="dddlStatus">
+                                    <label class="form-label"><span class="has-error required">* </span>Status</label>
+                                    <select id="ddlStatus" name="ddlStatus" class="form-control select2" isRequired="1" divcontainer="dddlStatus" errorspan="sddlStatus" defaultvalue="">
+                                    </select>
+                                    <input type="hidden" id="hdnStatus" name="hdnStatus" value="@resModel.ProjectStatus" />
+                                    <span class="help-block d-none has-error" id="sddlStatus">Please Select Status</span>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div class="card-footer">
