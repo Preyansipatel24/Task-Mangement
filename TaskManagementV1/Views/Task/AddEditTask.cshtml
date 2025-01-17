@@ -3,7 +3,7 @@
     ViewBag.dataTable = "true";
     ViewBag.select2 = "true";
     string Title = "Task";
-    string PageTitle = "Project";
+    string PageTitle = "Task";
     string Breadcrumbs = PageTitle;
     AddEditTaskResModel resModel = Model.Data;
     Breadcrumbs = resModel != null ? (resModel.Id > 0 ? $"Edit {PageTitle}" : $"Add {PageTitle}") : Breadcrumbs;
@@ -49,20 +49,56 @@
                                     <span class="help-block d-none has-error" id="sddlProject">Please Select Project</span>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 d-none">
                                 <div class="form-group" id="dtxtTaskDate">
                                     <label class="form-label"><span class="has-error required">* </span>Task Date</label>
                                     @{
                                         string TaskDateStr = resModel.Id > 0 ? resModel.TaskDate.ToString("yyyy-MM-dd") : "";
                                     }
-                                    <input type="date" id="txtTaskDate" name="txtTaskDate" class="form-control" isRequired="1" divcontainer="dtxtTaskDate" errorspan="stxtTaskDate" defaultvalue="" value="@TaskDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddDays(-7).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-dd")' />
+                                    <input type="datetime-local" id="txtTaskDate" name="txtTaskDate" class="form-control" isRequired="0" divcontainer="dtxtTaskDate" errorspan="stxtTaskDate" defaultvalue="" value="@TaskDateStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddDays(-7).ToString("yyyy-MM-dd")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-dd")' />
                                     <span class="help-block d-none has-error" id="stxtTaskDate">Please Select Task Date</span>
                                 </div>
                             </div>
+                            @if (resModel.Id > 0)
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group" id="dtxtTaskStartDateTime">
+                                        <label class="form-label"><span class="has-error required">* </span>Start DateTime</label>
+                                        @{
+                                            string TaskStartDateTimeStr = resModel.Id > 0 && resModel.TaskStartDateTime != null ? resModel.TaskStartDateTime.Value.ToString("yyyy-MM-ddTHH:mm") : "";
+                                        }
+                                        <input type="datetime-local" id="txtTaskStartDateTime" name="txtTaskStartDateTime" class="form-control" isRequired="1" divcontainer="dtxtTaskStartDateTime" errorspan="stxtTaskStartDateTime" defaultvalue="" value="@TaskStartDateTimeStr" onkeydown="return false;" onclick="return false;" min='@System.DateTime.Today.Date.AddDays(-1).ToString("yyyy-MM-ddTHH:mm")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-ddTHH:mm")' readonly />
+                                        <span class="help-block d-none has-error" id="stxtTaskStartDateTime">Please Select Start DateTime</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group" id="dtxtTaskStartDateTime">
+                                        <label class="form-label"><span class="has-error required">* </span>Start DateTime</label>
+                                        @{
+                                            string TaskStartDateTimeStr = resModel.Id > 0 && resModel.TaskStartDateTime != null ? resModel.TaskStartDateTime.Value.ToString("yyyy-MM-ddTHH:mm") : "";
+                                        }
+                                        <input type="datetime-local" id="txtTaskStartDateTime" name="txtTaskStartDateTime" class="form-control" isRequired="1" divcontainer="dtxtTaskStartDateTime" errorspan="stxtTaskStartDateTime" defaultvalue="" value="@TaskStartDateTimeStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddDays(-1).ToString("yyyy-MM-ddTHH:mm")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-ddTHH:mm")' />
+                                        <span class="help-block d-none has-error" id="stxtTaskStartDateTime">Please Select Start DateTime</span>
+                                    </div>
+                                </div>
+                            }
                             <div class="col-md-3">
+                                <div class="form-group" id="dtxtTaskEndDateTime">
+                                    <label class="form-label"><span class="has-error required"> </span>End DateTime</label>
+                                    @{
+                                        string TaskEndDateTimeStr = resModel.Id > 0 && resModel.TaskEndDateTime != null ? resModel.TaskEndDateTime.Value.ToString("yyyy-MM-ddTHH:mm") : "";
+                                    }
+                                    <input type="datetime-local" id="txtTaskEndDateTime" name="txtTaskEndDateTime" class="form-control" isRequired="0" divcontainer="dtxtTaskEndDateTime" errorspan="stxtTaskEndDateTime" defaultvalue="" value="@TaskEndDateTimeStr" onkeydown="return false;" onclick="this.showPicker()" min='@System.DateTime.Today.Date.AddDays(-1).ToString("yyyy-MM-ddTHH:mm")' max='@System.DateTime.Today.Date.ToString("yyyy-MM-ddTHH:mm")' />
+                                    <span class="help-block d-none has-error" id="stxtTaskEndDateTime">Please Select End DateTime</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-none">
                                 <div class="form-group" id="dtxtTaskDuration">
                                     <label class="form-label"><span class="has-error required">* </span>Task Duration <i class="fas fa-info-circle danger" data-toggle="tooltip" data-placement="top" title="Task duration allowed in between or equals to : 00:10 and 12:00 hours." style="color:red;"></i></label>
-                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control validate-datetime" isRequired="1" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration"  min="00:10" max="12:00" />
+                                    <input type="time" id="txtTaskDuration" name="txtTaskDuration" class="form-control" isRequired="0" divcontainer="dtxtTaskDuration" errorspan="stxtTaskDuration" defaultvalue="" value="@resModel.TaskDuration" min="00:10" max="12:00" />
                                     <span class="help-block d-none has-error" id="stxtTaskDuration">Please Enter Valid Task Duration</span>
                                 </div>
                             </div>

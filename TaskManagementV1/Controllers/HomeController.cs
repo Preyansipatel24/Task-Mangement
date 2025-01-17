@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net;
 using TaskManagementV1.Models;
 using TaskManagementV1.Models.ResponseModels;
 
@@ -18,46 +19,87 @@ namespace TaskManagementV1.Controllers
         }
         public async Task<IActionResult> Dashboard()
         {
-            var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
-            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+            var UserDetail = HttpContext.Session.GetObjectFromSession<UserInfoDetail>("UserDetail");
+            int LoggedInUserId = UserDetail != null ? UserDetail.Id : 0;
+            CommonResponse response = new CommonResponse();
+            try
             {
-                CommonResponse response = new CommonResponse();
-                try
-                {
-                    var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
-                    string apiUrl = BEBaseURL + "api/TaskManagement/GetAllDailyTaskList";
-                    var body = new
-                    {
-                        pageNumber = 0,
-                        pageSize = 0,
-                        orderBy = true,
-                        searchByString = "",
-                        searchByStatus = "",
-                        ProjectId = 0
-                    };
+                DashboardResModel dashboardResModel = new DashboardResModel();
+                var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
 
-                    var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
-                    if (apiResponse != null)
+                #region TaskList
+                dashboardResModel.TaskList = new List<GetTaskListResModel>();
+                string apiUrl = BEBaseURL + "api/TaskManagement/GetAllDailyTaskList";
+                var body = new
+                {
+                    pageNumber = 0,
+                    pageSize = 0,
+                    orderBy = true,
+                    searchByString = "",
+                    searchByStatus = "",
+                    ProjectId = 0,
+                    UserId = -1
+                };
+
+                var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+                if (apiResponse != null)
+                {
+                    if (apiResponse.status == true)
                     {
-                        response.Status = apiResponse.status;
-                        response.StatusCode = apiResponse.statusCode;
-                        response.Message = apiResponse.message;
-                        if (response.Status == true)
+                        string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
+                        dashboardResModel.TaskList = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
+                        foreach (var item in dashboardResModel.TaskList)
                         {
-                            string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
-                            List<GetTaskListResModel> responseObject = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
-                            foreach (var item in responseObject)
-                            {
-                                item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
-                            }
-                            response.Data = responseObject;
+                            item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
                         }
                     }
+                    else
+                    {
+                        response.StatusCode = apiResponse.statusCode;
+                        response.Message = apiResponse.message;
+                    }
                 }
-                catch (Exception ex) { response.Message = ex.Message; }
-                return View(response);
+                #endregion
+
+                #region ProjectList
+                dashboardResModel.ProjectList = new List<ProjectDetailResModel>();
+                apiUrl = BEBaseURL + "api/Project/GetAllProjectDetailList";
+                var GetAllProjectDetailListBody = new
+                {
+                    pageNumber = 0,
+                    pageSize = 0,
+                    orderBy = true,
+                    searchByString = "",
+                    searchByStatus = ""
+                };
+
+                apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, GetAllProjectDetailListBody);
+                if (apiResponse != null)
+                {
+                    if (apiResponse.status == true)
+                    {
+                        string dataString = JsonConvert.SerializeObject(apiResponse.data.projectDetailList);
+                        dashboardResModel.ProjectList = JsonConvert.DeserializeObject<List<ProjectDetailResModel>>(dataString);
+                        //dashboardResModel.ProjectList = dashboardResModel.ProjectList.Where(x => x.ReportingPersonUserId == LoggedInUserId).ToList();
+                        foreach (var item in dashboardResModel.ProjectList)
+                        {
+                            item.ProjectStartDateStr = item.ProjectStartDate != null ? item.ProjectStartDate.Value.ToString("dd-MM-yyyy") : "NA";
+                            item.ProjectEndDateStr = item.ProjectEndDate != null ? item.ProjectEndDate.Value.ToString("dd-MM-yyyy") : "NA";
+                        }
+                    }
+                    else
+                    {
+                        response.StatusCode = apiResponse.statusCode;
+                        response.Message = apiResponse.message;
+                    }
+                }
+                #endregion
+
+                response.Status = true;
+                response.Data = dashboardResModel;
             }
-            return RedirectToAction("Index", "Auth");
+            catch (Exception ex) { response.Message = ex.Message; }
+            return View(response);
         }
 
     }

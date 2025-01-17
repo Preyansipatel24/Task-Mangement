@@ -119,7 +119,7 @@ namespace TaskManagementV1.Controllers
         public async Task<IActionResult> AddEditProject(int ProjectId)
         {
             var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
-            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_Add || x.ActionCode == CommonConstant.Project_Edit))
             {
                 CommonResponse response = new CommonResponse();
                 try

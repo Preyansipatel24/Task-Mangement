@@ -1,0 +1,123 @@
+﻿@using TaskManagementV1.Models.ResponseModels
+@model CommonResponse
+@{
+    ViewBag.dataTable = "true";
+    string PageTitle = "Task Detail";
+    ViewBag.PageTitle = PageTitle;
+
+    List<GetTaskListResModel> TaskList = new List<GetTaskListResModel>();
+    GetTaskListResModel ProjectDetail = new GetTaskListResModel();
+    if (Model.Status)
+    {
+        TaskList = Model.Data;
+        ProjectDetail = TaskList.Count() > 0 ? TaskList.First() : ProjectDetail;
+    }
+}
+
+@if (Model.Status)
+{
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>@PageTitle</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/Home/Dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active">@PageTitle</li>
+                    </ol>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <div class="row form-group">
+                                <div class="col-md-4">
+                                    <h2 class="card-title"><b>Project Name : </b>@ProjectDetail.ProjectName</h2>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <h2 class="card-title"><b>Project StartDate : </b>@ProjectDetail.ProjectStartDateStr</h2>
+                                </div>
+                                <div class="col-md-4">
+                                    <h2 class="card-title"><b>Project EndDate : </b>@ProjectDetail.ProjectEndDateStr</h2>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-4">
+                                    <h2 class="card-title"><b>Reporting Person : </b>@ProjectDetail.ReportingPersonFullName</h2>
+                                </div>
+                                <div class="col-md-4">
+                                    <h2 class="card-title">
+                                        <b>Reporting Person Email : </b>@ProjectDetail.ReportingPersonEmail
+                                    </h2>
+                                </div>
+                                <div class="col-md-4">
+                                    <h2 class="card-title">
+                                        <b>Project Status : </b>@ProjectDetail.ProjectStatus
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    <table id="tblProjectTaskList" class="table table-bordered table-hover" style="width:100%;">
+                                        <thead class="bg-secondary text-center">
+                                            <tr>
+                                                <td>User Detail</td>
+                                                <td>Email</td>
+                                                <td>Start Date</td>
+                                                <td>End Date</td>
+                                                <td>Duration</td>
+                                                <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in TaskList)
+                                            {
+                                                <tr class="clsWrap">
+                                                    <td>@item.FullName - ( @item.RoleName )</td>
+                                                    <td>@item.Email</td>
+                                                    <td>@item.TaskStartDateTimeStr</td>
+                                                    <td>@item.TaskEndDateTimeStr</td>
+                                                    <td>@item.TaskDuration</td>
+                                                    <td>@item.TaskDescription</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+}
+else
+{
+    <p style="color:red">@Model.Message</p>
+}
+
+
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            ApplyDatatable('tblProjectTaskList');
+        });
+    </script>
+}

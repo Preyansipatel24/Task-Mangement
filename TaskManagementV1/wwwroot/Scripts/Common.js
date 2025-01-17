@@ -267,7 +267,7 @@ function ApplyDatatable(id) {
         "responsive": true,
         "autoWidth": false,
         /*"scrollX": false,*/
-        "scrollY": "35vh",
+        /*"scrollY": "35vh",*/
         "scrollCollapse": true,
         "lengthchange": true,
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
@@ -275,35 +275,57 @@ function ApplyDatatable(id) {
         /* dom: 'Bfrtip',*/
         buttons: [
             {
-                extend: 'copy',
-                exportOptions: { columns: "thead td:not(.noExport)" }
+                extend: 'copy', className: 'btn-primary',
+                exportOptions: { columns: "thead td:not(.noExport)" },
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                }
             },
             {
-                extend: 'csv',
-                exportOptions: { columns: "thead td:not(.noExport)" }
+                extend: 'csv', className: 'btn-primary',
+                exportOptions: { columns: "thead td:not(.noExport)" },
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                }
             },
             {
-                extend: 'excel',
-                exportOptions: { columns: "thead td:not(.noExport)" }
+                extend: 'excel', className: 'btn-primary',
+                exportOptions: { columns: "thead td:not(.noExport)" },
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                }
             },
             {
-                extend: 'pdf',
+                extend: 'pdf', className: 'btn-primary',
                 exportOptions: { columns: "thead td:not(.noExport)" },
                 //orientation: 'landscape',
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                },
                 customize: function (doc) {
                     doc.content[1].width = Array(doc.content[1].table.body[1].length + 1).join('*').split('');
                 }
             },
             {
-                extend: 'print',
-                exportOptions: { columns: "thead td:not(.noExport)" }
+                extend: 'print', className: 'btn-primary',
+                exportOptions: { columns: "thead td:not(.noExport)" },
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                }
             },
             {
-                extend: 'colvis',
-                columns: ':not(.noVis)'
+                extend: 'colvis', className: 'btn-primary',
+                columns: ':not(.noVis)',
+                init: function (api, node, config) {
+                    $(node).removeClass('btn-secondary')
+                }
             }
         ],
-    }).buttons().container().appendTo(datatableWrapper + ' .col-md-6:eq(0)');
+        "initComplete": function (settings, json) {
+            $(datatableId).wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+        },
+    });
+    //        .buttons().container().appendTo(datatableWrapper + ' .col-md-6:eq(0)');
 }
 
 $(document).ready(function () {

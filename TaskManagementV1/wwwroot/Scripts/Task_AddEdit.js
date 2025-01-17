@@ -13,10 +13,12 @@
             var reqData = {
                 "Id": parseInt($("#hdnTaskId").val()),
                 "ProjectId": parseInt($("#ddlProject").val()),
-                "TaskDate": $("#txtTaskDate").val(),
+                "TaskDate": $("#txtTaskDate").val() != '' ? $("#txtTaskDate").val() : null,
                 "TaskDuration": $("#txtTaskDuration").val(),
                 "TaskDescription": $("#txtTaskDescription").val(),
-                "TaskStatus": $("#ddlTaskStatus").val()
+                "TaskStatus": $("#ddlTaskStatus").val(),
+                "TaskStartDateTime": $("#txtTaskStartDateTime").val() != '' ? $("#txtTaskStartDateTime").val() : null,
+                "TaskEndDateTime": $("#txtTaskEndDateTime").val() != '' ? $("#txtTaskEndDateTime").val() : null
             }
             ajaxCall("Post", false, '/Task/SaveUpdateTask', JSON.stringify(reqData), function (result) {
                 if (result.status == true) {

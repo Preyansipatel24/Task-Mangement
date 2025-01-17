@@ -21,7 +21,7 @@ namespace TaskManagementV1.Controllers
         public IActionResult Index()
         {
             var PermissionList = HttpContext.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
-            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Project_View))
+            if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Task_View))
             {
                 return View();
             }
@@ -57,6 +57,8 @@ namespace TaskManagementV1.Controllers
                     foreach (var item in responseObject)
                     {
                         item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
+                        item.TaskStartDateTimeStr = item.TaskStartDateTime != null ? item.TaskStartDateTime.Value.ToString("dd-MM-yyyy HH:mm") : "-";
+                        item.TaskEndDateTimeStr = item.TaskEndDateTime != null ? item.TaskEndDateTime.Value.ToString("dd-MM-yyyy HH:mm") : "-";
                     }
                     response.Data = responseObject;
                 }
@@ -152,32 +154,96 @@ namespace TaskManagementV1.Controllers
             CommonResponse response = new CommonResponse();
             try
             {
-                var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
-                string apiUrl = BEBaseURL + "api/TaskManagement/AddEditDailyTask";
-                var body = new
+                if (request.TaskEndDateTime == null || (request.TaskEndDateTime != null && request.TaskStartDateTime != null && request.TaskEndDateTime.Value > request.TaskStartDateTime.Value && request.TaskEndDateTime.Value <= request.TaskStartDateTime.Value.Date.Add(new TimeSpan(23, 59, 59))))
                 {
-                    id = request.Id,
-                    projectId = request.ProjectId,
-                    taskDate = request.TaskDate,
-                    taskDuration = request.TaskDuration,
-                    taskDescription = request.TaskDescription,
-                    taskStatus = request.TaskStatus
-                };
+                    request.TaskDate = request.TaskStartDateTime.Value.Date;
+                    request.TaskDuration = "00:00";
+                    if (request.TaskEndDateTime != null && request.TaskStartDateTime != null)
+                    {
+                        TimeSpan timeSpan = request.TaskEndDateTime.Value - request.TaskStartDateTime.Value;
+                        request.TaskDuration = $"{(int)timeSpan.TotalHours:D2}:{timeSpan.Minutes:D2}";
+                        //string.Format("{ 0:D2}:{ 1:D2}", (int)timeSpan.TotalHours, timeSpan.Minutes);
+                    }
 
-                var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+                    var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
+                    string apiUrl = BEBaseURL + "api/TaskManagement/AddEditDailyTask";
+                    var body = new
+                    {
+                        id = request.Id,
+                        projectId = request.ProjectId,
+                        //taskDate = request.TaskDate,
+                        //taskDuration = request.TaskDuration,
+                        taskDate = request.TaskDate,
+                        taskDuration = request.TaskDuration,
+                        taskDescription = request.TaskDescription,
+                        taskStatus = request.TaskStatus,
+                        taskStartDateTime = request.TaskStartDateTime,
+                        taskEndDateTime = request.TaskEndDateTime
+                    };
 
-                response.Status = apiResponse.status;
-                response.StatusCode = apiResponse.statusCode;
-                response.Message = apiResponse.message;
-                if (response.Status == true)
+                    var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+
+                    response.Status = apiResponse.status;
+                    response.StatusCode = apiResponse.statusCode;
+                    response.Message = apiResponse.message;
+                    if (response.Status == true)
+                    {
+                        string dataString = JsonConvert.SerializeObject(apiResponse.data);
+                        var responseObject = JsonConvert.DeserializeObject(dataString);
+                        response.Data = responseObject;
+                    }
+                }
+                else
                 {
-                    string dataString = JsonConvert.SerializeObject(apiResponse.data);
-                    var responseObject = JsonConvert.DeserializeObject(dataString);
-                    response.Data = responseObject;
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = "Task end date-time must be greater then start date-time and both date must be same!";
                 }
             }
             catch (Exception ex) { response.Message = ex.Message; }
             return Json(response);
+        }
+
+        public async Task<IActionResult> GetTaskDetailList(int ProjectId)
+        {
+            CommonResponse response = new CommonResponse();
+            try
+            {
+                var BEBaseURL = _configuration.GetSection("SiteConfiguration:BEBaseURL").Value;
+                string apiUrl = BEBaseURL + "api/TaskManagement/GetAllDailyTaskList";
+                var body = new
+                {
+                    pageNumber = 0,
+                    pageSize = 0,
+                    orderBy = true,
+                    searchByString = "",
+                    searchByStatus = "",
+                    ProjectId = ProjectId,
+                    UserId = -1
+                };
+
+                var apiResponse = await _commonController.CallApiAsync(apiUrl, HttpMethod.Post, body);
+
+                //response.Status = apiResponse.status;
+                response.Status = true;
+                response.StatusCode = apiResponse.statusCode;
+                response.Message = apiResponse.message;
+                if (response.Status == true)
+                {
+                    string dataString = JsonConvert.SerializeObject(apiResponse.data.dailyTaskDetailList);
+                    List<GetTaskListResModel> responseObject = JsonConvert.DeserializeObject<List<GetTaskListResModel>>(dataString);
+                    foreach (var item in responseObject)
+                    {
+                        item.TaskDateStr = item.TaskDate.ToString("dd-MM-yyyy");
+                        item.TaskStartDateTimeStr = item.TaskStartDateTime != null ? item.TaskStartDateTime.Value.ToString("dd-MM-yyyy HH:mm") : "-";
+                        item.TaskEndDateTimeStr = item.TaskEndDateTime != null ? item.TaskEndDateTime.Value.ToString("dd-MM-yyyy HH:mm") : "-";
+                        item.ProjectStartDateStr = item.ProjectStartDate != null ? item.ProjectStartDate.Value.ToString("dd-MM-yyyy") : "-";
+                        item.ProjectEndDateStr = item.ProjectEndDate != null ? item.ProjectEndDate.Value.ToString("dd-MM-yyyy") : "NA";
+                    }
+                    response.Data = responseObject;
+                }
+            }
+            catch (Exception ex) { response.Message = ex.Message; }
+            return View(response);
         }
 
     }

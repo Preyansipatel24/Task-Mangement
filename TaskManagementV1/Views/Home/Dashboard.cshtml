@@ -4,16 +4,25 @@
     ViewBag.PageTitle = "Dashboard";
     List<GetTaskListResModel> TodayTaskList = new List<GetTaskListResModel>();
     List<GetTaskListResModel> YesterdayTaskList = new List<GetTaskListResModel>();
+    List<GetTaskListResModel> AllTaskList = new List<GetTaskListResModel>();
+    var PermissionList = Context.Session.GetObjectFromSession<List<ActionDetailsList>>("PermissionList");
+    var UserDetail = Context.Session.GetObjectFromSession<UserInfoDetail>("UserDetail");
+    int ProjectCount = 0;
+    int ColumnCount = 0;
+    List<ProjectDetailResModel> ProjectList = new List<ProjectDetailResModel>();
 
     if (Model.Status)
     {
-        List<GetTaskListResModel> resModels = Model.Data;
-        TodayTaskList = resModels.Where(x => x.TaskDate.Date == DateTime.Today.Date).ToList();
-        YesterdayTaskList = resModels.Where(x => x.TaskDate.Date == DateTime.Today.Date.AddDays(-1)).ToList();
+        DashboardResModel resModel = Model.Data;
+        List<GetTaskListResModel> TaskList = resModel.TaskList;
+        AllTaskList = TaskList;
+        TodayTaskList = TaskList.Where(x => x.UserId == UserDetail.Id && x.TaskDate.Date == DateTime.Today.Date).ToList();
+        YesterdayTaskList = TaskList.Where(x => x.UserId == UserDetail.Id && x.TaskDate.Date == DateTime.Today.Date.AddDays(-1)).ToList();
+        ProjectList = resModel.ProjectList.Take(20).ToList();
+        ProjectCount = resModel.ProjectList.Count();
     }
     TimeSpan TodayTotalHour = TodayTaskList.Count > 0 ? TodayTaskList.Select(x => TimeSpan.Parse(x.TaskDuration)).Aggregate((total, next) => total.Add(next)) : new TimeSpan();
     TimeSpan YesterdayTotalHour = YesterdayTaskList.Count > 0 ? YesterdayTaskList.Select(x => TimeSpan.Parse(x.TaskDuration)).Aggregate((total, next) => total.Add(next)) : new TimeSpan();
-
 }
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -35,141 +44,196 @@
 <div class="content">
     <div class="container">
 
-        @*  <div class="row">
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-info">
-        <div class="inner">
-        <h3>150</h3>
-
-        <p>Total Projects</p>
-        </div>
-        <div class="icon">
-        <i class="ion ion-bag"></i>
-        </div>
-        <a href="/Project/Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-success">
-        <div class="inner">
-        <h3>53<sup style="font-size: 20px">%</sup></h3>
-
-        <p>Bounce Rate</p>
-        </div>
-        <div class="icon">
-        <i class="ion ion-stats-bars"></i>
-        </div>
-        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-        <div class="inner">
-        <h3>44</h3>
-
-        <p>User Registrations</p>
-        </div>
-        <div class="icon">
-        <i class="ion ion-person-add"></i>
-        </div>
-        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-danger">
-        <div class="inner">
-        <h3>65</h3>
-
-        <p>Unique Visitors</p>
-        </div>
-        <div class="icon">
-        <i class="ion ion-pie-graph"></i>
-        </div>
-        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-        </div>
-        <!-- ./col -->
-        </div> *@
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Today's Task
-                        </h3>
-                        <h3 class="card-title float-right">
-                            @if (TodayTotalHour.TotalHours >= 8)
+        @if (PermissionList != null && PermissionList.Any(x => x.ActionCode == CommonConstant.Task_Dashboard_View))
+        {
+            <div class="row">
+                @foreach (var item in ProjectList)
+                {
+                    <div class="col-lg-3 col-6">
+                        @{
+                            var ProjectTaskList = AllTaskList.Where(x => x.ProjectId == item.Id).ToList();
+                            string ProjectTotalHourStr = "00:00";
+                        }
+                        <!-- small box -->
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>@item.ProjectName</h3>
+                                @if (ProjectTaskList.Count() > 0)
+                                {
+                                    ProjectTotalHourStr = ProjectTaskList.Select(x => TimeSpan.Parse(x.TaskDuration)).Aggregate((total, next) => total.Add(next)).ToString(@"hh\:mm");
+                                }
+                                <p>Total Task Duration : @ProjectTotalHourStr</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            @if (ProjectTaskList.Count() > 0)
                             {
-                                <span class="badge badge-pill badge-success"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
-                            }
-                            else if (TodayTotalHour.TotalHours < 5)
-                            {
-                                <span class="badge badge-pill badge-danger"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
+                                <a href="/Task/GetTaskDetailList?ProjectId=@item.Id" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                             }
                             else
                             {
-                                <span class="badge badge-pill badge-warning"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
+                                <a href="#" class="small-box-footer bg-secondary" onclick="return false;">More info <i class="fas fa-arrow-circle-right"></i></a>
                             }
-                        </h3>
+                        </div>
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        @foreach (var item in TodayTaskList)
-                        {
-                            <div class="callout callout-success">
-                                <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge badge-secondary"> @item.ProjectName </span></h5>
-                                <p>@item.TaskDescription</p>
-                            </div>
-                        }
+                }
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-12">
+                @if (TodayTotalHour.TotalHours >= 8)
+                {
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Today's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in TodayTaskList)
+                            {
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card-body -->
-                </div>
+                }
+                else if (TodayTotalHour.TotalHours < 5)
+                {
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Today's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in TodayTaskList)
+                            {
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                }
+                else
+                {
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Today's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @TodayTotalHour.ToString(@"hh\:mm") Hours </span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in TodayTaskList)
+                            {
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                }
+
                 <!-- /.card -->
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Yesterday's Task
-                        </h3>
-                        <h3 class="card-title float-right">
-                            @if (YesterdayTotalHour.TotalHours >= 8)
+                @if (YesterdayTotalHour.TotalHours >= 8)
+                {
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Yesterday's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in YesterdayTaskList)
                             {
-                                <span class="badge badge-pill badge-success"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
                             }
-                            else if (YesterdayTotalHour.TotalHours < 5)
-                            {
-                                <span class="badge badge-pill badge-danger"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-pill badge-warning"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
-                            }
-                        </h3>
+                        </div>
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        @foreach (var item in YesterdayTaskList)
-                        {
-                            <div class="callout callout-success">
-                                <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge badge-secondary"> @item.ProjectName </span></h5>
-                                <p>@item.TaskDescription</p>
-                            </div>
-                        }
+                }
+                else if (YesterdayTotalHour.TotalHours < 5)
+                {
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Yesterday's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in YesterdayTaskList)
+                            {
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card-body -->
-                </div>
+                }
+                else
+                {
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Yesterday's Task
+                            </h3>
+                            <h3 class="card-title float-right">
+                                <span class="badge badge-light"> Total @YesterdayTotalHour.ToString(@"hh\:mm") Hours</span>
+                            </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            @foreach (var item in YesterdayTaskList)
+                            {
+                                <div class="callout callout-success">
+                                    <h5 class="float-right">@item.TaskDuration hours in <span class="badge badge-light"> @item.ProjectName </span></h5>
+                                    <p>@item.TaskDescription</p>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                }
                 <!-- /.card -->
             </div>
         </div>
