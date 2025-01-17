@@ -57,7 +57,7 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>@item.ProjectName</h3>
+                                <h2 title="@item.ProjectName" style="overflow:hidden; white-space: nowrap;">@item.ProjectName</h2>
                                 @if (ProjectTaskList.Count() > 0)
                                 {
                                     ProjectTotalHourStr = ProjectTaskList.Select(x => TimeSpan.Parse(x.TaskDuration)).Aggregate((total, next) => total.Add(next)).ToString(@"hh\:mm");

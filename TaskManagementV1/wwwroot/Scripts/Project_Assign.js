@@ -16,7 +16,72 @@ function GetProjectUserList() {
     $.blockUI();
     ajaxCall("Get", false, '/ProjectAssignment/ProjectUserList?ProjectId=' + parseInt($("#hdnProjectId").val()) + '&DepartmentId=' + parseInt($("#ddlDepartment").val()) + '&DesignationId=' + parseInt($("#ddlDesignation").val()), null, function (result) {
         $("#divProjectAssignmentList").html(result.responseText);
-        ApplyDatatable('tblProjectAssignmentList');
+       // ApplyDatatable('tblProjectAssignmentList');
+
+        datatableId = "#tblProjectAssignmentList";
+        datatableWrapper = datatableId + "_wrapper";
+        $(datatableId).DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            /*"scrollX": false,*/
+            /*"scrollY": "35vh",*/
+            "scrollCollapse": true,
+            "lengthchange": true,
+            "lengthMenu": [[-1], ['All']],
+            //fixedHeader: true,
+            /* dom: 'Bfrtip',*/
+            buttons: [
+                {
+                    extend: 'copy', className: 'btn-primary',
+                    exportOptions: { columns: "thead td:not(.noExport)" },
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                },
+                {
+                    extend: 'csv', className: 'btn-primary',
+                    exportOptions: { columns: "thead td:not(.noExport)" },
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                },
+                {
+                    extend: 'excel', className: 'btn-primary',
+                    exportOptions: { columns: "thead td:not(.noExport)" },
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                },
+                {
+                    extend: 'pdf', className: 'btn-primary',
+                    exportOptions: { columns: "thead td:not(.noExport)" },
+                    //orientation: 'landscape',
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    },
+                    customize: function (doc) {
+                        doc.content[1].width = Array(doc.content[1].table.body[1].length + 1).join('*').split('');
+                    }
+                },
+                {
+                    extend: 'print', className: 'btn-primary',
+                    exportOptions: { columns: "thead td:not(.noExport)" },
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                },
+                {
+                    extend: 'colvis', className: 'btn-primary',
+                    columns: ':not(.noVis)',
+                    init: function (api, node, config) {
+                        $(node).removeClass('btn-secondary')
+                    }
+                }
+            ],
+            "initComplete": function (settings, json) {
+                $(datatableId).wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+            },
+        });
         $.unblockUI();
 
         $("#btnUpdateProjectAssignment").click(function () {
