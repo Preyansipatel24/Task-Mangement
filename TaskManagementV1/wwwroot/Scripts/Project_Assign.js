@@ -9,6 +9,14 @@ $(document).ready(function () {
         $.blockUI();
         RedirectToPage('/Project/Index');
     });
+
+    $("#ddlDepartment").change(function () {
+        GetProjectUserList();
+    });
+    $("#ddlDesignation").change(function () {
+        GetProjectUserList();
+    });
+
     $('.select2').select2();
 });
 
